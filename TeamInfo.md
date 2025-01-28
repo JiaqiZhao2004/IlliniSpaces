@@ -1,19 +1,19 @@
-# team000-sample
+# team041-databased
 
 ## Basic Information
 
 |   Info      |        Description     |
 | ----------- | ---------------------- |
-| TeamID      |        Team-000        |
-| TeamName    |         sample         |
-| Captain     |       Abdu Alawini     |
-| Captain     |  alawini@illinois.edu  |
-| Member1     |        Kevin Pei       |
-| Member1     |   kevin2@illinois.edu  |
-| Member2     |     Ti-Chung Cheng     |
-| Member2     |  tichung3@illinois.edu |
-| Member3     |                        |
-| Member3     |                        |
+| TeamID      |        Team-041        |
+| TeamName    |        databased       |
+| Captain     |     Nehan Tarefder     |
+| Captain     |  nehant2@illinois.edu  |
+| Member1     |       Atsi Gupta       |
+| Member1     |   atsig2@illinois.edu  |
+| Member2     |    Somrishi Banerjee   |
+| Member2     |    sb91@illinois.edu   |
+| Member3     |        Roy Zhao        |
+| Member3     |  royzhao2@illinois.edu |
 
 ## Project Information
 
