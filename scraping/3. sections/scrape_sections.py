@@ -1,5 +1,4 @@
 import os
-
 import pandas as pd
 from scraping.utils import download_xml, parse_2_level_xml
 
