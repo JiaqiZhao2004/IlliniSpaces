@@ -1,0 +1,86 @@
+,number,href,name
+0,101,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/101.xml,Intro Computing: Engrg & Sci
+1,102,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/102.xml,Little Bits to Big Ideas
+2,105,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/105.xml,Intro Computing: Non-Tech
+3,107,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/107.xml,Data Science Discovery
+4,124,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/124.xml,Introduction to Computer Science I
+5,128,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/128.xml,Introduction to Computer Science II
+6,173,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/173.xml,Discrete Structures
+7,199,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/199.xml,Undergraduate Open Seminar in Computer Science
+8,210,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/210.xml,Ethical & Professional Issues
+9,211,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/211.xml,Ethical and Professional Conduct
+10,222,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/222.xml,Software Design Lab
+11,225,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/225.xml,Data Structures
+12,233,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/233.xml,Computer Architecture
+13,266,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/266.xml,Community Innovation
+14,277,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/277.xml,Algorithms and Data Structures for Data Science
+15,307,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/307.xml,Modeling and Learning in Data Science
+16,340,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/340.xml,Introduction to Computer Systems
+17,341,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/341.xml,System Programming
+18,357,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/357.xml,Numerical Methods I
+19,361,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/361.xml,Probability & Statistics for Computer Science
+20,374,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/374.xml,Introduction to Algorithms & Models of Computation
+21,397,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/397.xml,Individual Study
+22,402,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/402.xml,Accelerated Fundamentals of Computing II
+23,403,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/403.xml,Accelerated Fundamentals of Algorithms II
+24,407,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/407.xml,Cryptography
+25,410,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/410.xml,Text Information Systems
+26,411,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/411.xml,Database Systems
+27,412,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/412.xml,Introduction to Data Mining
+28,413,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/413.xml,Intro to Combinatorics
+29,415,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/415.xml,Game Development
+30,421,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/421.xml,Programming Languages & Compilers
+31,423,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/423.xml,Operating Systems Design
+32,425,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/425.xml,Distributed Systems
+33,427,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/427.xml,Software Engineering I
+34,431,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/431.xml,Embedded Systems
+35,433,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/433.xml,Computer System Organization
+36,434,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/434.xml,Real World Algorithms for IoT and Data Science
+37,435,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/435.xml,Cloud Networking
+38,437,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/437.xml,Topics in Internet of Things
+39,438,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/438.xml,Communication Networks
+40,440,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/440.xml,Artificial Intelligence
+41,441,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/441.xml,Applied Machine Learning
+42,442,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/442.xml,Trustworthy Machine Learning
+43,444,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/444.xml,Deep Learning for Computer Vision
+44,445,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/445.xml,Computational Photography
+45,446,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/446.xml,Machine Learning
+46,447,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/447.xml,Natural Language Processing
+47,448,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/448.xml,Audio Computing Laboratory
+48,450,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/450.xml,Numerical Analysis
+49,461,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/461.xml,Computer Security I
+50,463,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/463.xml,Computer Security II
+51,464,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/464.xml,Topics in Societal and Ethical Impacts of Computer Technology
+52,468,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/468.xml,Tech and Advertising Campaigns
+53,473,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/473.xml,Algorithms
+54,477,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/477.xml,Formal Software Development Methods
+55,482,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/482.xml,Simulation
+56,483,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/483.xml,Applied Parallel Programming
+57,491,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/491.xml,Seminar
+58,493,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/493.xml,"Senior Project II, ACP"
+59,494,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/494.xml,Senior Project II
+60,497,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/497.xml,CS Team Project
+61,498,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/498.xml,Special Topics
+62,499,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/499.xml,Senior Thesis
+63,500,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/500.xml,Current Topics in Computing Education Research
+64,510,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/510.xml,Advanced Information Retrieval
+65,514,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/514.xml,Advanced Topics in Network Science
+66,521,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/521.xml,Advanced Topics in Programming Systems
+67,523,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/523.xml,Advanced Operating Systems
+68,524,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/524.xml,Concurrent Progrmg Languages
+69,525,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/525.xml,Advanced Distributed Systems
+70,526,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/526.xml,Advanced Compiler Construction
+71,533,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/533.xml,Parallel Computer Architecture
+72,534,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/534.xml,Advanced Topics in Computer Architecture
+73,538,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/538.xml,Advanced Computer Networks
+74,555,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/555.xml,Numerical Methods for PDEs
+75,563,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/563.xml,Advanced Computer Security
+76,565,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/565.xml,Human-Computer Interaction
+77,568,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/568.xml,User-Centered Machine Learning
+78,581,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/581.xml,Algorithmic Genomic Biology
+79,584,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/584.xml,Embedded System Verification
+80,588,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/588.xml,Autonomous Vehicle System Engineering
+81,591,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/591.xml,Advanced Seminar
+82,597,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/597.xml,Individual Study
+83,598,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/598.xml,Special Topics
+84,599,https://courses.illinois.edu/cisapp/explorer/schedule/2025/spring/CS/599.xml,Thesis Research
