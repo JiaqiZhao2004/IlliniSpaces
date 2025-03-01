@@ -1,10 +1,13 @@
+// src/components/Header.js
+import React from "react";
+import "./header.css";
+
 const Header = () => {
-    return (
-      <header className="bg-[#112F57] p-4">
-        <h1 className="text-white text-2xl font-bold">IlliniSpaces</h1>
-      </header>
-    );
-  };
-  
-  export default Header;
-  
+  return (
+    <header className="header">
+      <h1 className="header-title">IlliniSpaces</h1>
+    </header>
+  );
+};
+
+export default Header;
