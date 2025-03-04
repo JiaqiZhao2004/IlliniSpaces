@@ -1,0 +1,44 @@
+BuildingName,BuildingId,OpenTime_MTWRF,CloseTime_MTWR,CloseTime_F,OpenTime_Sat,CloseTime_Sat,OpenTime_Sun,CloseTime_Sun
+Digital Computer Laboratory,DCL,06:45,22:00,22:00,11:00,22:00,11:00,22:00
+Chemistry Annex,CA,07:00,21:00,21:00,11:00,21:00,11:00,21:00
+Natural History Building,NHB,07:00,22:00,21:00,07:00,17:00,12:00,22:00
+"Literatures, Cultures & Linguistics Building",LCLB,07:00,22:00,18:00,07:00,18:00,12:00,22:00
+Lincoln Hall,LH,07:00,23:00,23:00,07:00,23:00,12:00,23:00
+Wohlers Hall,WOHLR,07:00,23:00,21:00,07:00,21:00,12:00,23:00
+Campus Instructional Facility,CIF,07:00,23:00,21:00,09:00,21:00,12:00,23:00
+Mumford Hall,MH,07:00,21:00,18:00,07:00,18:00,12:00,18:00
+English Building,EB,07:00,23:59,22:00,07:00,22:00,12:00,23:59
+Library,LIB,08:30,22:00,18:00,13:00,17:00,13:00,22:00
+Noyes Laboratory,NOYES,07:00,21:00,21:00,13:00,18:00,13:00,20:00
+Architecture Building,ARCH,06:30,22:00,17:00,06:30,17:00,06:30,22:00
+Huff Hall,HUFF,07:00,22:00,18:00,10:00,18:00,06:00,22:00
+Ceramics Building,CB,07:00,22:00,22:00,07:00,22:00,07:00,22:00
+Siebel Center for Computer Science,SIEBL,07:00,21:30,21:30,07:00,21:30,07:00,21:30
+Armory,ARMRY,05:00,22:30,22:00,07:00,21:00,07:00,21:00
+Transportation Building,TB,07:00,21:00,21:00,07:00,21:00,07:00,21:00
+Gregory Hall,GH,07:00,23:59,23:59,07:00,23:59,07:00,23:59
+David Kinley Hall,DKH,07:00,23:59,23:00,07:00,18:00,09:30,23:59
+Animal Sciences Laboratory,ASL,07:00,21:00,18:00,07:00,12:00,closed,closed
+Materials Science & Engineering Building,MSEB,07:00,22:00,18:00,07:00,12:00,closed,closed
+Psychology Building,PSYCH,07:00,20:00,17:00,07:00,17:00,closed,closed
+Education Building,EDUC,07:00,21:00,21:00,07:00,18:00,closed,closed
+Bevier Hall,BEV,07:00,22:00,22:00,closed,closed,closed,closed
+Burrill Hall,BUR,07:00,19:00,19:00,closed,closed,closed,closed
+Davenport Hall,DH,07:00,18:30,18:30,closed,closed,closed,closed
+Engineering Hall,EH,07:00,21:00,18:00,closed,closed,closed,closed
+Everitt Laboratory,EVRT,07:00,21:00,18:00,closed,closed,closed,closed
+Loomis Laboratory of Physics,LMS,07:00,21:00,18:00,closed,closed,closed,closed
+Loomis Laboratory of Physics,LMS,07:00,21:00,18:00,closed,closed,closed,closed
+Medical Sciences Building,MSB,07:00,17:30,17:30,closed,closed,closed,closed
+National Soybean Research Center,NSRC,07:00,18:00,18:00,closed,closed,closed,closed
+Roger Adams Laboratory,RAL,07:00,18:00,18:00,closed,closed,closed,closed
+Sidney Lu Mechanical Engineering Building,LUMEB,07:00,21:00,18:00,closed,closed,closed,closed
+Speech & Hearing Science Building,SHS,07:30,17:30,17:30,closed,closed,closed,closed
+Turner Hall,TH,07:00,21:00,17:00,closed,closed,closed,closed
+Foellinger Auditorium,FA,events/class,events/class,events/class,events only,events only,events only,events only
+Henry Administration Building,HAB,07:00,17:30,17:30,locked,locked,locked,locked
+Wymer Hall,SWH,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
+Temple Hoyne Buell Hall,THBH,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
+Krannert Art Museum,KAM,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
+Altgeld Hall,AH,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
+Lincoln Hall Theater,LHT,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
