@@ -3,8 +3,11 @@
 import { useUser, SignOutButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Header } from "../components/Header";
-import { RoomDashboard } from "../components/RoomDashboard";
+import dynamic from "next/dynamic";
+import { SecondaryNavBar } from "../components/SecondaryNavBar";
+const DynamicCampusMap = dynamic(() => import("../components/CampusMap"), {
+  ssr: false,
+});
 
 export default function Dashboard() {
   const { user, isSignedIn } = useUser();
@@ -17,17 +20,12 @@ export default function Dashboard() {
   }, [isSignedIn, router]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* ✅ Pass props to Header */}
-      <Header 
-        isLoggedIn={isSignedIn || false} 
-        userEmail={user?.primaryEmailAddress?.emailAddress || ""}
-      />
-      
-      <div className="flex flex-col items-center justify-center mt-6">
-        <RoomDashboard />
-        {/* <SignOutButton /> */}
-      </div>
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <SecondaryNavBar selectedId={0} />
+      <h1 className="text-3xl font-bold">Welcome, {user?.firstName}!</h1>
+      <p className="text-lg mt-2">You are now logged into IlliniSpaces.</p>
+      <SignOutButton />
+      <DynamicCampusMap />
     </div>
   );
 }
