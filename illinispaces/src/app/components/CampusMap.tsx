@@ -19,7 +19,7 @@ const CampusMap = () => {
 
   return (
     <MapContainer
-      center={[40.10980366, -88.22723631]} // Replace with your campus coordinates
+      center={[40.10980366, -88.22723631]}
       zoom={17}
       style={{ height: "80vh", width: "100%" }}
     >
