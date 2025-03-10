@@ -38,7 +38,7 @@ export function RoomCard({ room }: RoomCardProps) {
       </div>
       <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
         <button className="w-full py-2 bg-[#e74c3c] text-white rounded-md hover:bg-[#d44233] transition-colors duration-300">
-          View Details
+          View Status
         </button>
       </div>
     </div>
