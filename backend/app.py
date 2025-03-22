@@ -27,10 +27,10 @@ def get_db_connection():
 def hello_world():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SHOW databases")
-    result = cursor.fetchone()
+    cursor.execute("SHOW TABLES")
+    result = cursor.fetchall()  # Fetch all rows
     connection.close()
-    return result[0]
+    return ', '.join([row[0] for row in result])  # Convert tuple list to string
 
 if __name__ == '__main__':
     # app.run(debug=True, host="0.0.0.0", port=int(os.environ.get('PORT', 8080)))

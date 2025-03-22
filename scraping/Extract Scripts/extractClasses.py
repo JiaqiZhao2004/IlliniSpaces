@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import xml.etree.ElementTree as ET
+import mysql.connector
 
 def parse_xml_file(file_path):
     tree = ET.parse(file_path)
@@ -43,7 +44,7 @@ def insert_course_section(cursor, data):
     """, (event_id, start_date, end_date, repeats, start_time, end_time, event_name, room_number, building_id))
 
 def process_xml_files(folder_path, db_path):
-    conn = sqlite3.connect(db_path)
+    conn = get_db_connection()
     cursor = conn.cursor()
     
     for file_name in os.listdir(folder_path):
@@ -55,7 +56,17 @@ def process_xml_files(folder_path, db_path):
     conn.commit()
     conn.close()
 
+def get_db_connection():
+
+    connection = mysql.connector.connect(
+        user="root",
+        password="~Y<KsHDBG13<CN1T",
+        database="databased",
+        host="34.130.58.90",  # Use public IP instead of Unix socket
+        port=3306  # Default MySQL port
+    )
+    return connection
 # Example usage
-folder_path = "path/to/xml/folder"  # Change to your folder path
+folder_path = "C:\Users\nehan\Desktop\sp25-cs411-team041-databased\scraping\ClassSections\4. section data"  # Change to your folder path
 db_path = "path/to/database.db"  # Change to your database path
 process_xml_files(folder_path, db_path)
