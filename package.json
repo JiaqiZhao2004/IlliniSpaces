@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "mysql-client": "^0.3.0"
+  }
+}
