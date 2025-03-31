@@ -30,10 +30,10 @@ def get_db_connection():
 def hello_world():
     connection = get_db_connection()
     cursor = connection.cursor()
-    cursor.execute("SHOW databases")
-    result = cursor.fetchone()
+    cursor.execute("SHOW TABLES")
+    result = cursor.fetchall()  # Fetch all rows
     connection.close()
-    return result[0]
+    return ', '.join([row[0] for row in result])  # Convert tuple list to string
 
 # Route to insert data into the Rooms table
 @app.route('/insert', methods=['POST'])
