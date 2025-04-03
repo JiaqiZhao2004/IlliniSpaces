@@ -1,7 +1,7 @@
 // Dashboard.js
 "use client";
 
-import { useUser, SignOutButton } from "@clerk/nextjs";
+import { useUser, useAuth, SignOutButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
@@ -18,6 +18,20 @@ export default function Dashboard() {
   const { user, isSignedIn } = useUser();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(0);
+  
+  // Example frontend call to backend with Clerk JWT
+  // const { getToken } = useAuth();
+
+  // const fetchUserData = async () => {
+  //   const token = await getToken(); // Get Clerk JWT
+  //   const response = await fetch("http://localhost:5000/protected", {
+  //     method: "GET",
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   });
+
+  //   const data = await response.json();
+  //   console.log("User Data:", data);
+  // };
 
   useEffect(() => {
     if (!isSignedIn) {
