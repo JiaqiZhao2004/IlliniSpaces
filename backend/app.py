@@ -131,5 +131,65 @@ def delete_favorite():
     
     return jsonify({'message': 'Favorite deleted successfully'}), 200
 
+@app.route('/users', methods=['POST'])
+def add_user():
+    try:
+        email = get_email(request)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
+
+    data = request.json
+    full_name = data.get('FullName')
+
+    if not full_name or not email:
+        return jsonify({'error': 'User FullName is required'}), 400
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("INSERT INTO Users (FullName, Email) VALUES (%s, %s)", (full_name, email))
+        connection.commit()
+    except mysql.connector.Error as err:
+        connection.rollback()
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    return jsonify({'message': 'User added successfully'}), 201
+
+@app.route('/users', methods=['DELETE'])
+def delete_user():
+    try:
+        uid = get_user_id(request)  # get UID from the request
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("DELETE FROM Users WHERE UID = %s", (uid,))
+        connection.commit()
+    except mysql.connector.Error as err:
+        connection.rollback()
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+    return jsonify({'message': 'User deleted successfully'}), 200
+
+# TODO: UPDATE method for User
+# @app.route('/users', methods=['UPDATE'])
+# def update_user():
+#     try:
+#         uid = get_user_id(request)
+#     except ValueError as e:
+#         return jsonify({"error": str(e)}), 401
+#
+#     data = request.json
+#
+#     return jsonify({'message': 'User updated successfully'}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=8080)
