@@ -4,6 +4,7 @@ import mysql.connector
 from flask import Flask, request, jsonify
 from clerk_backend_api import Clerk
 from clerk_backend_api.jwks_helpers import verify_token
+from datetime import datetime
 
 load_dotenv()
 clerk = Clerk(bearer_auth=os.getenv("CLERK_SECRET_KEY"))
@@ -177,6 +178,43 @@ def delete_user():
         cursor.close()
         connection.close()
     return jsonify({'message': 'User deleted successfully'}), 200
+
+@app.route('/user/reservations', methods=['GET'])
+def get_user_reservations():
+    try:
+        uid = get_user_id(request)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+
+    try:
+        cursor.execute("""
+            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime
+            FROM UserReservations ur
+            JOIN Buildings b ON ur.BuildingId = b.BuildingId
+            WHERE ur.UID = %s
+        """, (uid,))
+        reservations = cursor.fetchall()
+    except mysql.connector.Error as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    # Optional: categorize active vs past
+    today = datetime.now().date()
+    active, past = [], []
+
+    for res in reservations:
+        res_date = datetime.strptime(res["Date"], "%Y-%m-%d").date()
+        (active if res_date >= today else past).append(res)
+
+    return jsonify({
+        "active": active,
+        "past": past
+    }), 200
 
 # TODO: UPDATE method for User
 # @app.route('/users', methods=['UPDATE'])

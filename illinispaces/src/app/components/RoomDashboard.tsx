@@ -1,30 +1,30 @@
 import React, { useState } from "react";
 import { RoomCard } from "./RoomCard";
 import { SearchIcon, FilterIcon } from "lucide-react";
-import { sampleRooms, Room } from "./sampleRooms"; // ✅ Import full room list
+import { sampleRooms, Room } from "./sampleRooms"; // Import full room list
 
-const ROOMS_PER_PAGE = 32; // ✅ Number of rooms per page
+const ROOMS_PER_PAGE = 32; // Number of rooms per page
 
 export function RoomDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("");
-  const [currentPage, setCurrentPage] = useState(1); // ✅ Page tracking
+  const [currentPage, setCurrentPage] = useState(1); // Page tracking
 
-  // ✅ Filter the full list of rooms
+  // Filter the full list of rooms
   const filteredRooms = sampleRooms.filter((room) => {
     const searchQuery = searchTerm.toLowerCase();
     const matchesSearch =
       room.buildingId.toLowerCase().includes(searchQuery) ||
       room.roomNumber.toLowerCase().includes(searchQuery) ||
-      room.type.toLowerCase().includes(searchQuery); // ✅ Added type search
+      room.type.toLowerCase().includes(searchQuery); // Added type search
 
     const matchesType = filterType ? room.type === filterType : true;
     return matchesSearch && matchesType;
   });
 
-  const totalPages = Math.ceil(filteredRooms.length / ROOMS_PER_PAGE); // ✅ Calculate total pages
+  const totalPages = Math.ceil(filteredRooms.length / ROOMS_PER_PAGE); // Calculate total pages
 
-  // ✅ Paginate results
+  // Paginate results
   const startIndex = (currentPage - 1) * ROOMS_PER_PAGE;
   const paginatedRooms = filteredRooms.slice(startIndex, startIndex + ROOMS_PER_PAGE);
 
@@ -35,7 +35,6 @@ export function RoomDashboard() {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-[#152042] mb-6">Available Rooms</h2>
         <div className="flex flex-col md:flex-row gap-4 mb-6">
-          {/* 🔍 Search Input */}
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <SearchIcon className="h-5 w-5 text-gray-400" />
@@ -47,12 +46,12 @@ export function RoomDashboard() {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1); // ✅ Reset to first page when searching
+                setCurrentPage(1); // Reset to first page when searching
               }}
             />
           </div>
 
-          {/* 🔽 Filter Dropdown */}
+          {/* Filter Dropdown */}
           <div className="relative w-full md:w-64">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <FilterIcon className="h-5 w-5 text-gray-400" />
@@ -62,7 +61,7 @@ export function RoomDashboard() {
               value={filterType}
               onChange={(e) => {
                 setFilterType(e.target.value);
-                setCurrentPage(1); // ✅ Reset to first page when filtering
+                setCurrentPage(1); // Reset to first page when filtering
               }}
             >
               <option value="">All Room Types</option>
@@ -76,7 +75,7 @@ export function RoomDashboard() {
         </div>
       </div>
 
-      {/* 📌 Room Cards Display */}
+      {/* Room Cards Display */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
         {paginatedRooms.length > 0 ? (
           paginatedRooms.map((room, index) => <RoomCard key={index} room={room} />)
@@ -87,7 +86,7 @@ export function RoomDashboard() {
         )}
       </div>
 
-      {/* 🔄 Pagination Controls */}
+      {/* Pagination Controls */}
       {filteredRooms.length > ROOMS_PER_PAGE && (
         <div className="flex justify-center mt-6 space-x-4">
           <button

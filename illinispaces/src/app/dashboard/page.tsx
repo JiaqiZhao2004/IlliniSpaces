@@ -9,6 +9,7 @@ import { Header } from "../components/Header";
 import { RoomDashboard } from "../components/RoomDashboard";
 import { SecondaryNavBar } from "../components/SecondaryNavBar";
 import { RequestsTab } from "../components/RequestsTab";
+import { Favorites } from "../components/Favorites";
 
 const DynamicCampusMap = dynamic(() => import("../components/CampusMap"), {
   ssr: false,
@@ -66,6 +67,12 @@ export default function Dashboard() {
             >
               Requests
             </button>
+            <button
+              className={`flex-1 py-2 text-center ${activeTab === 3 ? "border-b-2 border-red-500 font-bold" : "text-gray-500"}`}
+              onClick={() => setActiveTab(3)}
+            >
+              Favorites
+            </button>
           </div>
 
           <div className="p-4">
@@ -73,8 +80,10 @@ export default function Dashboard() {
               <RoomDashboard />
             ) : activeTab === 1 ? (
               <DynamicCampusMap />
-            ) : (
+            ) : activeTab === 2 ?(
               <RequestsTab />
+            ) : (
+              <Favorites />
             )}
           </div>
         </div>
