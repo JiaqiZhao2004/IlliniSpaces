@@ -21,7 +21,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(0);
   
   // Example frontend call to backend with Clerk JWT
-  // const { getToken } = useAuth();
+  const { getToken } = useAuth();
 
   // const fetchUserData = async () => {
   //   const token = await getToken(); // Get Clerk JWT
@@ -33,10 +33,29 @@ export default function Dashboard() {
   //   const data = await response.json();
   //   console.log("User Data:", data);
   // };
+  const addUser = async () => {
+    const token = await getToken(); // Get Clerk JWT
+    console.log("Token being sent:", token);
+    const response = await fetch("http://localhost:8080/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        FullName: ""
+      })
+    });
+
+    const data = await response.json();
+    console.log("Added User:", data);
+  };
 
   useEffect(() => {
     if (!isSignedIn) {
       router.push("/");
+    } else {
+      addUser()
     }
   }, [isSignedIn, router]);
 

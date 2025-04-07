@@ -5,10 +5,12 @@ from flask import Flask, request, jsonify
 from clerk_backend_api import Clerk
 from clerk_backend_api.jwks_helpers import verify_token
 from datetime import datetime
+from flask_cors import CORS
 
 load_dotenv()
 clerk = Clerk(bearer_auth=os.getenv("CLERK_SECRET_KEY"))
 app = Flask(__name__)
+CORS(app)  # Allow all domains
 
 def get_db_connection():
     db_user = os.getenv('DB_USER')
@@ -142,13 +144,13 @@ def add_user():
     data = request.json
     full_name = data.get('FullName')
 
-    if not full_name or not email:
-        return jsonify({'error': 'User FullName is required'}), 400
+    if full_name == "":
+        full_name = email.split("@")[0]
 
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
-        cursor.execute("INSERT INTO Users (FullName, Email) VALUES (%s, %s)", (full_name, email))
+        cursor.execute("INSERT IGNORE INTO Users (FullName, Email) VALUES (%s, %s)", (full_name, email))
         connection.commit()
     except mysql.connector.Error as err:
         connection.rollback()
