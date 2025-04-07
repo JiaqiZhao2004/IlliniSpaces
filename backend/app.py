@@ -55,7 +55,6 @@ def get_email(request):
         else:
             raise ValueError(f"Failed to fetch user data: {response.status_code} {response.text}")
     except Exception as e:
-        print(e)
         raise ValueError("Invalid or expired token") from e
     
 def get_user_id(request):
@@ -159,13 +158,20 @@ def add_user():
     data = request.json
     full_name = data.get('FullName')
 
-    if not full_name or not email:
-        return jsonify({'error': 'User FullName is required'}), 400
+    if full_name == "":
+        full_name = email.split("@")[0]
 
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
-        cursor.execute("INSERT INTO Users (FullName, Email) VALUES (%s, %s)", (full_name, email))
+        cursor.execute("SELECT * FROM Users WHERE Email = %s", (email,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            print("User already exists:", existing_user)
+        else:
+            cursor.execute("INSERT INTO Users (FullName, Email) VALUES (%s, %s)", (full_name, email))
+            print("Inserted new user.")
         connection.commit()
     except mysql.connector.Error as err:
         connection.rollback()
