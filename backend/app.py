@@ -187,34 +187,79 @@ def get_user_reservations():
         return jsonify({"error": str(e)}), 401
 
     connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
+    cursor = connection.cursor()
 
-    try:
-        cursor.execute("""
+    cursor.execute("""
             SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime
             FROM UserReservations ur
             JOIN Buildings b ON ur.BuildingId = b.BuildingId
             WHERE ur.UID = %s
         """, (uid,))
-        reservations = cursor.fetchall()
-    except mysql.connector.Error as e:
-        return jsonify({"error": str(e)}), 500
+    user_reservations = cursor.fetchall()
+    cursor.close()
+    connection.close()
+
+    return jsonify({'user_reservations': [ur[0] for ur in user_reservations]}), 200
+
+    # try:
+    #     cursor.execute("""
+    #         SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime
+    #         FROM UserReservations ur
+    #         JOIN Buildings b ON ur.BuildingId = b.BuildingId
+    #         WHERE ur.UID = %s
+    #     """, (uid,))
+    #     reservations = cursor.fetchall()
+    # except mysql.connector.Error as e:
+    #     return jsonify({"error": str(e)}), 500
+    # finally:
+    #     cursor.close()
+    #     connection.close()
+
+    # Optional: categorize active vs past
+    # today = datetime.now().date()
+    # active, past = [], []
+
+    # for res in reservations:
+    #     res_date = datetime.strptime(res["Date"], "%Y-%m-%d").date()
+    #     (active if res_date >= today else past).append(res)
+
+    # return jsonify({
+    #     "active": active,
+    #     "past": past
+    # }), 200
+
+@app.route('/user/reservations', methods=['POST'])
+def add_user_reservations():
+    try:
+        uid = get_user_id(request)  # get UID from the request
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
+    
+    data = request.json
+    room_number = data.get('RoomNumber')
+    building_name = data.get('BuildingName')
+    date = data.get('Date')
+    start_time = data.get('StartTime')
+    end_time = data.get('EndTime')
+    
+    if not uid or not room_number or not building_name or not date or not start_time or not end_time:
+        return jsonify({'error': 'UID, RoomNumber, BuildingName, Date, StartTime, EndTime are required'}), 400
+    
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("INSERT INTO Favorites (UID, BuildingId) VALUES (%s, %s, %s, %s, %s, %s)", 
+                       (uid, room_number, building_name, date, start_time, end_time))
+        connection.commit()
+    except mysql.connector.Error as err:
+        connection.rollback()
+        return jsonify({'error': str(err)}), 500
     finally:
         cursor.close()
         connection.close()
+    
+    return jsonify({'message': 'Favorite added successfully'}), 201
 
-    # Optional: categorize active vs past
-    today = datetime.now().date()
-    active, past = [], []
-
-    for res in reservations:
-        res_date = datetime.strptime(res["Date"], "%Y-%m-%d").date()
-        (active if res_date >= today else past).append(res)
-
-    return jsonify({
-        "active": active,
-        "past": past
-    }), 200
 
 # TODO: UPDATE method for User
 # @app.route('/users', methods=['UPDATE'])
