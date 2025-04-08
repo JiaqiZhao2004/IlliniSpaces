@@ -271,7 +271,7 @@ def add_user_reservations():
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
-        cursor.execute("INSERT INTO Favorites (UID, BuildingId) VALUES (%s, %s, %s, %s, %s, %s)", 
+        cursor.execute("INSERT INTO UserReservations (UID, RoomNumber, BuildingName, Date, StartTime, EndTime) VALUES %s, %s, %s, %s, %s, %s)", 
                        (uid, room_number, building_name, date, start_time, end_time))
         connection.commit()
     except mysql.connector.Error as err:
@@ -281,7 +281,7 @@ def add_user_reservations():
         cursor.close()
         connection.close()
     
-    return jsonify({'message': 'Favorite added successfully'}), 201
+    return jsonify({'message': 'User Reservation added successfully'}), 201
 
 
 # TODO: UPDATE method for User
