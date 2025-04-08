@@ -6,12 +6,31 @@ import { useRouter } from "next/navigation"; // For navigation after login
 import { useEffect } from "react";
 
 const LoginPage = () => {
-  const { isSignedIn } = useAuth();
+  const { isSignedIn} = useAuth();
   const router = useRouter();
+  const addUser = async () => {
+    const { getToken } = useAuth();
+    const token = await getToken(); // Get Clerk JWT
+    const response = await fetch("http://localhost:8080/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        FullName: ""
+      })
+    });
+
+    const data = await response.json();
+    console.log("Added User:", data);
+  };
 
   useEffect(() => {
     if (isSignedIn) {
-      router.push("/dashboard"); // Redirect to dashboard after login
+      addUser().then(() => {
+        router.push("/dashboard");
+      }); // Redirect to dashboard after login
     }
   }, [isSignedIn, router]);
 

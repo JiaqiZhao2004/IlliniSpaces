@@ -21,7 +21,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState(0);
   
   // Example frontend call to backend with Clerk JWT
-  // const { getToken } = useAuth();
+  const { getToken } = useAuth();
 
   // const fetchUserData = async () => {
   //   const token = await getToken(); // Get Clerk JWT

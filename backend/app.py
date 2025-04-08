@@ -3,12 +3,16 @@ from dotenv import load_dotenv
 import mysql.connector
 from flask import Flask, request, jsonify
 from clerk_backend_api import Clerk
-from clerk_backend_api.jwks_helpers import verify_token
+from clerk_backend_api.jwks_helpers import verify_token, VerifyTokenOptions
 from datetime import datetime
+from flask_cors import CORS
+import requests
 
 load_dotenv()
-clerk = Clerk(bearer_auth=os.getenv("CLERK_SECRET_KEY"))
+CLERK_SECRET_KEY = os.getenv("CLERK_SECRET_KEY")
+clerk = Clerk(bearer_auth=CLERK_SECRET_KEY)
 app = Flask(__name__)
+CORS(app)
 
 def get_db_connection():
     db_user = os.getenv('DB_USER')
@@ -36,8 +40,20 @@ def get_email(request):
 
     try:
         # Verify the token with Clerk's built-in function
-        session = clerk.verify_token(token)
-        return session["email_addresses"][0]["email_address"]
+        options = VerifyTokenOptions(secret_key=CLERK_SECRET_KEY)
+        session = verify_token(token, options)
+        user_id = session["sub"]
+        headers = {
+            'Authorization': f'Bearer {CLERK_SECRET_KEY}',
+            'Content-Type': 'application/json'
+        }
+        response = requests.get(f'https://api.clerk.com/v1/users/{user_id}', headers=headers)
+        if response.status_code == 200:
+            user_data = response.json()
+            email = user_data['email_addresses'][0]['email_address']
+            return email
+        else:
+            raise ValueError(f"Failed to fetch user data: {response.status_code} {response.text}")
     except Exception as e:
         raise ValueError("Invalid or expired token") from e
     
@@ -142,13 +158,20 @@ def add_user():
     data = request.json
     full_name = data.get('FullName')
 
-    if not full_name or not email:
-        return jsonify({'error': 'User FullName is required'}), 400
+    if full_name == "":
+        full_name = email.split("@")[0]
 
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
-        cursor.execute("INSERT INTO Users (FullName, Email) VALUES (%s, %s)", (full_name, email))
+        cursor.execute("SELECT * FROM Users WHERE Email = %s", (email,))
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+            print("User already exists:", existing_user)
+        else:
+            cursor.execute("INSERT INTO Users (FullName, Email) VALUES (%s, %s)", (full_name, email))
+            print("Inserted new user.")
         connection.commit()
     except mysql.connector.Error as err:
         connection.rollback()
