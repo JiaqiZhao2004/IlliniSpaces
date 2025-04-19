@@ -283,6 +283,22 @@ def add_user_reservations():
     
     return jsonify({'message': 'User Reservation added successfully'}), 201
 
+@app.route('/buildings', methods=['GET'])
+def get_buildings():
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("SELECT * FROM Buildings")
+        columns = [desc[0] for desc in cursor.description]  # Get column names
+        buildings = cursor.fetchall()
+        results = [dict(zip(columns, row)) for row in buildings]
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    return jsonify({'buildings': results}), 200
 
 # TODO: UPDATE method for User
 # @app.route('/users', methods=['UPDATE'])

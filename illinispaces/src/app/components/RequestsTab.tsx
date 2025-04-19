@@ -44,7 +44,7 @@ export function RequestsTab() {
     <div className="max-w-2xl mx-auto flex flex-col mt-10">
       <h1 className="text-3xl font-bold mb-8 text-left">Active Requests</h1>
       <div className="w-full max-w-4xl space-y-4">
-        {activeRequests.length > 0 ? (
+        {activeRequests && activeRequests.length > 0 ? (
           activeRequests.map((req, i) => (
             <UserRequest key={i} {...req} />
           ))
@@ -55,7 +55,7 @@ export function RequestsTab() {
 
       <h1 className="text-3xl font-bold mb-8 text-left mt-10">Past Requests</h1>
       <div className="w-full max-w-4xl space-y-4">
-        {pastRequests.length > 0 ? (
+        {pastRequests && pastRequests.length > 0 ? (
           pastRequests.map((req, i) => (
             <UserRequest key={i} {...req} />
           ))
