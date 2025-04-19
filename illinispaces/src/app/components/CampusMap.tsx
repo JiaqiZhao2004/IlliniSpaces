@@ -63,6 +63,35 @@ const CampusMap = () => {
 
   return (
     userLocation && (
+    <div>
+      <button
+      onClick={async () => {
+      if (!userLocation) return;
+
+      const now = new Date();
+      const timeString = now.toTimeString().slice(0, 5); // HH:MM
+      const dateString = now.toISOString().slice(0, 10); // YYYY-MM-DD
+
+      const res = await fetch("http://localhost:8080/nearestRooms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          latitude: userLocation[0],
+          longitude: userLocation[1],
+          time: timeString,
+          date: dateString,
+        }),
+      });
+
+      const data = await res.json();
+      console.log(data);
+    }}
+    className="mt-4 p-2 bg-green-600 text-white rounded"
+  >
+    Find Nearby Available Rooms
+  </button>
     <MapContainer
       center={userLocation}
       zoom={17}
@@ -85,6 +114,7 @@ const CampusMap = () => {
           </Marker>
         ))}
     </MapContainer>
+    </div>
     )
   );
 };
