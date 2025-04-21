@@ -1,23 +1,25 @@
+import {User} from "@clerk/backend";
+
 interface UserRequestProps {
   RoomNumber: string;
-  BuildingName: string;
+  BuildingId: string;
   Date: string;
   StartTime: string;
   EndTime: string;
 }
 
-export const UserRequest: React.FC<UserRequestProps> = ({
+export function UserRequest({
   RoomNumber,
-  BuildingName,
+  BuildingId,
   Date,
   StartTime,
   EndTime
-}) => {
+}: UserRequestProps) {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-xl font-semibold text-gray-700">{BuildingName}</h3>
+          <h3 className="text-xl font-semibold text-gray-700">{BuildingId}</h3>
           <p className="text-gray-600">Room {RoomNumber}</p>
           <div className="mt-2 text-sm text-gray-500">
             <p>Date: {Date}</p>
