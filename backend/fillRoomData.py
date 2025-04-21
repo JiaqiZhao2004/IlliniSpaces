@@ -23,6 +23,14 @@ def get_db_connection():
     return connection
 
 def get_lat_lon(building_name):
+
+    if building_name == "Literatures, Cultures & Linguistics Building":
+        building_name = "Foreign Languages Building"
+    elif building_name == "Speech & Hearing Science Building":
+        building_name = "Department of Speech and Hearing Science"
+    elif building_name == "Lincoln Hall Theater":
+        building_name = "Lincoln Hall"
+
     base_url = "https://nominatim.openstreetmap.org/search?"
     params = {
         'q': building_name,
