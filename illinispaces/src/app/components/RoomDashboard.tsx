@@ -1,33 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RoomCard } from "./RoomCard";
 import { SearchIcon, FilterIcon } from "lucide-react";
-import { sampleRooms, Room } from "./sampleRooms"; // Import full room list
+import { sampleRooms, Room } from "./sampleRooms";
+import { useAuth } from "@clerk/nextjs";
 
-const ROOMS_PER_PAGE = 32; // Number of rooms per page
+const ROOMS_PER_PAGE = 32;
 
 export function RoomDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("");
-  const [currentPage, setCurrentPage] = useState(1); // Page tracking
+  const [currentPage, setCurrentPage] = useState(1);
+  const [favoriteBuildings, setFavoriteBuildings] = useState<Set<string>>(new Set());
 
-  // Filter the full list of rooms
+  const { getToken } = useAuth();
+
+  const toggleFavorite = async (buildingId: string) => {
+    const newSet = new Set(favoriteBuildings);
+    const isCurrentlyFavorite = newSet.has(buildingId);
+    const token = await getToken();
+
+    try {
+      if (isCurrentlyFavorite) {
+        const res = await fetch("http://localhost:8080/favorites", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ BuildingId: buildingId }),
+        });
+        if (!res.ok) throw new Error("Failed to unfavorite");
+        newSet.delete(buildingId);
+      } else {
+        const res = await fetch("http://localhost:8080/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ BuildingId: buildingId }),
+        });
+        if (!res.ok) throw new Error("Failed to favorite");
+        newSet.add(buildingId);
+      }
+
+      setFavoriteBuildings(newSet);
+    } catch (err) {
+      console.error("Error updating favorite:", err);
+    }
+  };
+
   const filteredRooms = sampleRooms.filter((room) => {
     const searchQuery = searchTerm.toLowerCase();
     const matchesSearch =
       room.buildingId.toLowerCase().includes(searchQuery) ||
       room.roomNumber.toLowerCase().includes(searchQuery) ||
-      room.type.toLowerCase().includes(searchQuery); // Added type search
+      room.type.toLowerCase().includes(searchQuery);
 
     const matchesType = filterType ? room.type === filterType : true;
     return matchesSearch && matchesType;
   });
 
-  const totalPages = Math.ceil(filteredRooms.length / ROOMS_PER_PAGE); // Calculate total pages
-
-  // Paginate results
+  const totalPages = Math.ceil(filteredRooms.length / ROOMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROOMS_PER_PAGE;
   const paginatedRooms = filteredRooms.slice(startIndex, startIndex + ROOMS_PER_PAGE);
-
   const roomTypes = [...new Set(sampleRooms.map((room) => room.type))];
 
   return (
@@ -46,12 +82,11 @@ export function RoomDashboard() {
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
-                setCurrentPage(1); // Reset to first page when searching
+                setCurrentPage(1);
               }}
             />
           </div>
 
-          {/* Filter Dropdown */}
           <div className="relative w-full md:w-64">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <FilterIcon className="h-5 w-5 text-gray-400" />
@@ -61,7 +96,7 @@ export function RoomDashboard() {
               value={filterType}
               onChange={(e) => {
                 setFilterType(e.target.value);
-                setCurrentPage(1); // Reset to first page when filtering
+                setCurrentPage(1);
               }}
             >
               <option value="">All Room Types</option>
@@ -75,10 +110,17 @@ export function RoomDashboard() {
         </div>
       </div>
 
-      {/* Room Cards Display */}
+      {/* Room Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
         {paginatedRooms.length > 0 ? (
-          paginatedRooms.map((room, index) => <RoomCard key={index} room={room} />)
+          paginatedRooms.map((room, index) => (
+            <RoomCard
+              key={index}
+              room={room}
+              isFavorite={favoriteBuildings.has(room.buildingId)}
+              onToggleFavorite={toggleFavorite}
+            />
+          ))
         ) : (
           <div className="col-span-full text-center py-12 text-gray-500">
             No rooms match your search criteria.
@@ -86,7 +128,7 @@ export function RoomDashboard() {
         )}
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination */}
       {filteredRooms.length > ROOMS_PER_PAGE && (
         <div className="flex justify-center mt-6 space-x-4">
           <button

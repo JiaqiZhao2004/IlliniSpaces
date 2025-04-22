@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import { Building2Icon, UsersIcon, LayoutIcon } from "lucide-react";
 import {useAuth} from "@clerk/nextjs";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { Building2Icon, UsersIcon, LayoutIcon, Star } from "lucide-react";
 
 // Define the expected room object structure
 export interface Room {
@@ -14,9 +14,11 @@ export interface Room {
 
 interface RoomCardProps {
   room: Room;
+  isFavorite: boolean;
+  onToggleFavorite: (buildingId: string) => void;
 }
 
-export function RoomCard({ room }: RoomCardProps) {
+export function RoomCard({ room, isFavorite, onToggleFavorite }: RoomCardProps) {
 
   const { getToken } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -97,7 +99,6 @@ export function RoomCard({ room }: RoomCardProps) {
       document.removeEventListener("keydown", handleEsc);
     };
   }, [isModalOpen]);
-
   return (
     <>
       {/* Room Card */}
@@ -108,28 +109,43 @@ export function RoomCard({ room }: RoomCardProps) {
             <span className="text-xl font-bold">{room.roomNumber}</span>
           </div>
         </div>
+
         <div className="p-4">
-          <div className="flex items-center mb-3">
-            <Building2Icon className="h-5 w-5 text-[#e74c3c] mr-2" />
-            <span className="text-gray-700">Building: {room.buildingId}</span>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center">
+              <Building2Icon className="h-5 w-5 text-[#e74c3c] mr-2"/>
+              <span className="text-gray-700">Building: {room.buildingId}</span>
+            </div>
+            <button
+                onClick={() => onToggleFavorite(room.buildingId)}
+                className="text-yellow-400 hover:scale-110 transition-transform"
+                aria-label="Toggle Favorite"
+            >
+              <Star
+                  className={`h-5 w-5 ${isFavorite ? "fill-yellow-400" : "stroke-yellow-400"}`}
+                  fill={isFavorite ? "currentColor" : "none"}
+              />
+            </button>
           </div>
+
           <div className="flex items-center mb-3">
-            <UsersIcon className="h-5 w-5 text-[#e74c3c] mr-2" />
+            <UsersIcon className="h-5 w-5 text-[#e74c3c] mr-2"/>
             <span className="text-gray-700">Capacity: {room.capacity}</span>
           </div>
           <div className="flex items-center">
-            <LayoutIcon className="h-5 w-5 text-[#e74c3c] mr-2" />
+            <LayoutIcon className="h-5 w-5 text-[#e74c3c] mr-2"/>
             <span className="text-gray-700">Type: {room.type}</span>
           </div>
         </div>
+
         <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
           <button
-            onClick={() => {
-              setIsModalOpen(true);
-              fetchUserReservations(room.buildingId, room.roomNumber, date_to_str(date));
-            }}
-            className="w-full py-2 bg-[#e74c3c] text-white rounded-md hover:bg-[#d44233] transition-colors duration-300">
-          View Status
+              onClick={() => {
+                setIsModalOpen(true);
+                fetchUserReservations(room.buildingId, room.roomNumber, date_to_str(date));
+              }}
+              className="w-full py-2 bg-[#e74c3c] text-white rounded-md hover:bg-[#d44233] transition-colors duration-300">
+            View Status
           </button>
         </div>
       </div>
