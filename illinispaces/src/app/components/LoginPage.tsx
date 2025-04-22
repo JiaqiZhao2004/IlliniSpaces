@@ -6,33 +6,33 @@ import { useRouter } from "next/navigation"; // For navigation after login
 import { useEffect } from "react";
 
 const LoginPage = () => {
-  const { isSignedIn} = useAuth();
-  const router = useRouter();
-  const addUser = async () => {
-    const { getToken } = useAuth();
-    const token = await getToken(); // Get Clerk JWT
-    const response = await fetch("http://localhost:8080/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        FullName: ""
-      })
-    });
+  // const { isSignedIn} = useAuth();
+  // const router = useRouter();
+  // const addUser = async () => {
+  //   const { getToken } = useAuth();
+  //   const token = await getToken(); // Get Clerk JWT
+  //   const response = await fetch("http://localhost:8080/users", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": `Bearer ${token}`
+  //     },
+  //     body: JSON.stringify({
+  //       FullName: ""
+  //     })
+  //   });
+  //
+  //   const data = await response.json();
+  //   console.log("Added User:", data);
+  // };
 
-    const data = await response.json();
-    console.log("Added User:", data);
-  };
-
-  useEffect(() => {
-    if (isSignedIn) {
-      addUser().then(() => {
-        router.push("/dashboard");
-      }); // Redirect to dashboard after login
-    }
-  }, [isSignedIn, router]);
+  // useEffect(() => {
+  //   if (isSignedIn) {
+  //     // addUser().then(() => {
+  //       router.push("/dashboard");
+  //     // }); // Redirect to dashboard after login
+  //   }
+  // }, [isSignedIn, router]);
 
   return (
     <div className="w-1/2 flex items-center justify-center p-12">

@@ -210,19 +210,30 @@ def get_user_reservations():
         return jsonify({"error": str(e)}), 401
 
     connection = get_db_connection()
-    cursor = connection.cursor()
+    cursor = connection.cursor(dictionary=True)
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     cursor.execute("""
-            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime
+            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.StartTime) AS start_time
             FROM UserReservations ur
             JOIN Buildings b ON ur.BuildingId = b.BuildingId
-            WHERE ur.UID = %s
-        """, (uid,))
-    user_reservations = cursor.fetchall()
+            WHERE ur.UID = %s AND CONCAT(ur.Date, ' ', ur.EndTime) > %s
+            ORDER BY start_time
+        """, (uid, now))
+    active_reservations = cursor.fetchall()
+    cursor.execute("""
+            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.EndTime) AS end_time
+            FROM UserReservations ur
+            JOIN Buildings b ON ur.BuildingId = b.BuildingId
+            WHERE ur.UID = %s AND CONCAT(ur.Date, ' ', ur.EndTime) <= %s
+            ORDER BY end_time DESC
+        """, (uid, now))
+    past_reservations = cursor.fetchall()
+    user_reservations = {"active" : active_reservations, "past" : past_reservations}
     cursor.close()
     connection.close()
 
-    return jsonify({'user_reservations': [ur[0] for ur in user_reservations]}), 200
+    return jsonify(user_reservations), 200
 
     # try:
     #     cursor.execute("""
@@ -253,26 +264,29 @@ def get_user_reservations():
 
 @app.route('/user/reservations', methods=['POST'])
 def add_user_reservations():
+
+    # TODO: prevent overlapping reservations!
+
     try:
         uid = get_user_id(request)  # get UID from the request
     except ValueError as e:
         return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
     
     data = request.json
+    building_id = data.get('BuildingId')
     room_number = data.get('RoomNumber')
-    building_name = data.get('BuildingName')
     date = data.get('Date')
     start_time = data.get('StartTime')
     end_time = data.get('EndTime')
     
-    if not uid or not room_number or not building_name or not date or not start_time or not end_time:
-        return jsonify({'error': 'UID, RoomNumber, BuildingName, Date, StartTime, EndTime are required'}), 400
+    if not uid or not room_number or not building_id or not date or not start_time or not end_time:
+        return jsonify({'error': 'UID, RoomNumber, BuildingId, Date, StartTime, EndTime are required'}), 400
     
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
-        cursor.execute("INSERT INTO UserReservations (UID, RoomNumber, BuildingName, Date, StartTime, EndTime) VALUES %s, %s, %s, %s, %s, %s)", 
-                       (uid, room_number, building_name, date, start_time, end_time))
+        cursor.execute("INSERT INTO UserReservations (UID, RoomNumber, BuildingId, Date, StartTime, EndTime) VALUES (%s, %s, %s, %s, %s, %s)",
+                       (uid, room_number, building_id, date, start_time, end_time))
         connection.commit()
     except mysql.connector.Error as err:
         connection.rollback()
@@ -282,6 +296,58 @@ def add_user_reservations():
         connection.close()
     
     return jsonify({'message': 'User Reservation added successfully'}), 201
+
+
+@app.route('/reservations/search', methods=['GET'])
+def search_reservations():
+    """
+    Search existing reservations (now only support user reservations, not hard reservations)
+    input: BuildingId, RoomNumber, Date
+    :return: list of matching UserReservations(UID, ReservationId, StartTime, EndTime)
+    """
+
+    try:
+        uid = get_user_id(request)  # get UID from the request
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
+
+    room_number = request.args.get('RoomNumber')
+    building_id = request.args.get('BuildingId')
+    date = request.args.get('Date')
+    # TODO: Add weekday-dependent building opening and closing time
+    # TODO: Add hard reservations
+    # weekday = datetime(date.year, date.month, date.day).isoweekday()  # 1 to 7
+
+    if not uid or not room_number or not building_id or not date:
+        return jsonify({'error': 'UID, RoomNumber, BuildingId, Date are required'}), 400
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    try:
+        # TODO: Add building opening and closing time
+        # cursor.execute("SELECT ?? FROM Buildings WHERE BuildingId = %s", (building_id,))
+
+        cursor.execute(
+            "SELECT Email, ReservationId, StartTime, EndTime "
+            "FROM UserReservations NATURAL JOIN Users "
+            "WHERE Date = %s AND BuildingId = %s AND RoomNumber = %s "
+            "ORDER BY StartTime, EndTime DESC", (date, building_id, room_number))
+        user_reservations = cursor.fetchall()
+
+        # TODO: add hard reservations
+        # cursor.execute(
+        #     "SELECT * FROM HardReservations "
+        #             "WHERE Date = %s AND BuildingId = %s AND RoomNumber = %s",
+        #     (date, building_id, room_number))
+        # connection.commit()
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    return jsonify({'reservations': user_reservations}), 200
 
 @app.route('/buildings', methods=['GET'])
 def get_buildings():

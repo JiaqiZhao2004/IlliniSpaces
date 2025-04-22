@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { UserRequest } from "../components/UserRequest";
+import {da} from "date-fns/locale";
 
 type Reservation = {
   RoomNumber: string;
@@ -26,7 +27,6 @@ export function RequestsTab() {
             Authorization: `Bearer ${token}`,
           },
         });
-
         if (!res.ok) throw new Error("Failed to fetch reservations");
 
         const data = await res.json();

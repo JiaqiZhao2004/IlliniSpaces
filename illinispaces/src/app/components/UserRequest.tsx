@@ -1,3 +1,5 @@
+import {User} from "@clerk/backend";
+
 interface UserRequestProps {
   RoomNumber: string;
   BuildingName: string;
@@ -6,13 +8,13 @@ interface UserRequestProps {
   EndTime: string;
 }
 
-export const UserRequest: React.FC<UserRequestProps> = ({
+export function UserRequest({
   RoomNumber,
   BuildingName,
   Date,
   StartTime,
   EndTime
-}) => {
+}: UserRequestProps) {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center">
