@@ -2,7 +2,7 @@ import {User} from "@clerk/backend";
 
 interface UserRequestProps {
   RoomNumber: string;
-  BuildingId: string;
+  BuildingName: string;
   Date: string;
   StartTime: string;
   EndTime: string;
@@ -10,7 +10,7 @@ interface UserRequestProps {
 
 export function UserRequest({
   RoomNumber,
-  BuildingId,
+  BuildingName,
   Date,
   StartTime,
   EndTime
@@ -19,7 +19,7 @@ export function UserRequest({
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-xl font-semibold text-gray-700">{BuildingId}</h3>
+          <h3 className="text-xl font-semibold text-gray-700">{BuildingName}</h3>
           <p className="text-gray-600">Room {RoomNumber}</p>
           <div className="mt-2 text-sm text-gray-500">
             <p>Date: {Date}</p>

@@ -210,19 +210,30 @@ def get_user_reservations():
         return jsonify({"error": str(e)}), 401
 
     connection = get_db_connection()
-    cursor = connection.cursor()
+    cursor = connection.cursor(dictionary=True)
+    now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     cursor.execute("""
-            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime
+            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.StartTime) AS start_time
             FROM UserReservations ur
             JOIN Buildings b ON ur.BuildingId = b.BuildingId
-            WHERE ur.UID = %s
-        """, (uid,))
-    user_reservations = cursor.fetchall()
+            WHERE ur.UID = %s AND CONCAT(ur.Date, ' ', ur.EndTime) > %s
+            ORDER BY start_time
+        """, (uid, now))
+    active_reservations = cursor.fetchall()
+    cursor.execute("""
+            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.EndTime) AS end_time
+            FROM UserReservations ur
+            JOIN Buildings b ON ur.BuildingId = b.BuildingId
+            WHERE ur.UID = %s AND CONCAT(ur.Date, ' ', ur.EndTime) <= %s
+            ORDER BY end_time DESC
+        """, (uid, now))
+    past_reservations = cursor.fetchall()
+    user_reservations = {"active" : active_reservations, "past" : past_reservations}
     cursor.close()
     connection.close()
 
-    return jsonify({'user_reservations': [ur[0] for ur in user_reservations]}), 200
+    return jsonify(user_reservations), 200
 
     # try:
     #     cursor.execute("""
