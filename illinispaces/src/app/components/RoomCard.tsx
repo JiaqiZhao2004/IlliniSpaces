@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { Building2Icon, UsersIcon, LayoutIcon } from "lucide-react";
 import {useAuth} from "@clerk/nextjs";
 import DatePicker from "react-datepicker";
@@ -21,6 +21,8 @@ export function RoomCard({ room }: RoomCardProps) {
   const { getToken } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reservations, setReservations] = useState([]);
+  const [startTime, setStartTime] = useState("00:00");
+  const [endTime, setEndTime] = useState("00:00");
   const [date, setDate] = useState(new Date());
   const dd = (date) => String(date.getDate()).padStart(2, '0');
   const mm = (date) =>  String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -28,6 +30,29 @@ export function RoomCard({ room }: RoomCardProps) {
   const date_to_str = (date) => yyyy(date) + '-' + mm(date) + '-' + dd(date);
 
   // UserReservation ONLY, Hard Reservations is not yet included
+  const addUserReservations = async (BuildingId, RoomNumber, Date, StartTime, EndTime) => {
+    const token = await getToken();
+
+    try {
+      const response = await fetch(`http://localhost:8080/user/reservations`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          BuildingId: BuildingId,
+          RoomNumber: RoomNumber,
+          Date: Date,
+          StartTime: StartTime,
+          EndTime: EndTime
+        })
+      })
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
+
   const fetchUserReservations = async (BuildingId, RoomNumber, Date) => {
     const token = await getToken();
 
@@ -54,6 +79,24 @@ export function RoomCard({ room }: RoomCardProps) {
       console.error("Error:", err);
     }
   };
+
+  // Close modal with ESC key
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsModalOpen(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener("keydown", handleEsc);
+    }
+
+    // Cleanup listener when modal closes
+    return () => {
+      document.removeEventListener("keydown", handleEsc);
+    };
+  }, [isModalOpen]);
 
   return (
     <>
@@ -115,34 +158,72 @@ export function RoomCard({ room }: RoomCardProps) {
             </div>
 
             {/* Right: Scrollable List (2/3 width) */}
-            <div className="w-2/3 bg-gray-100 rounded-lg p-4 overflow-y-auto border border-gray-200">
-              <h3 className="text-xl font-semibold mb-4 flex items-center justify-between">
-                <span>Room Status for:</span>
-                <div className="relative">
-                  <DatePicker
-                    selected={date}
-                    onChange={
-                      (date) => {
-                        setDate(date);
-                        fetchUserReservations(room.buildingId, room.roomNumber, date_to_str(date))
-                      }
-                    }
-                    className="border border-gray-300 rounded-md px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
-                    calendarClassName="z-51" // keeps the calendar above modal
+            <div className="w-2/3 bg-gray-100 rounded-lg p-4 overflow-y-auto border border-gray-200 flex flex-col">
+              <div className="flex-grow overflow-y-auto pr-1">
+                <h3 className="text-xl font-semibold mb-4 flex items-center justify-between">
+                  <span>Room Status for:</span>
+                  <div className="relative">
+                    <DatePicker
+                        selected={date}
+                        onChange={
+                          (date) => {
+                            setDate(date);
+                            fetchUserReservations(room.buildingId, room.roomNumber, date_to_str(date))
+                          }
+                        }
+                        className="border border-gray-300 rounded-md px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
+                        calendarClassName="z-51" // keeps the calendar above modal
+                    />
+                  </div>
+                </h3>
+                {reservations.length == 0 ? <h4 className="text-center fullwidth">No reservations on this day</h4> :
+                    <ul className="space-y-2">
+                      {reservations.map((res, idx) => (
+                          <li key={idx} className="bg-white p-3 rounded shadow-sm hover:bg-gray-50 transition">
+                            <strong>{res.Email}</strong> reserved this
+                            room <strong>{res.StartTime} - {res.EndTime}</strong>
+                          </li>
+                      ))}
+                    </ul>
+                }
+              </div>
+              <div className="mt-4 pt-4 border-t border-gray-300 flex items-center justify-end gap-4">
+                {/* Time inputs */}
+                <div className="flex gap-2 items-center">
+                  <label className="text-sm font-medium text-gray-700">Start:</label>
+                  <input
+                      type="time"
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                      className="border border-gray-300 rounded px-2 py-1 text-sm"
+                  />
+
+                  <label className="ml-4 text-sm font-medium text-gray-700">End:</label>
+                  <input
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
+                      className="border border-gray-300 rounded px-2 py-1 text-sm"
                   />
                 </div>
-              </h3>
-              {reservations.length == 0 ? <h4 className="text-center fullwidth">No reservations on this day</h4> :
-                <ul className="space-y-2">
-                  {reservations.map((res, idx) => (
-                      <li key={idx} className="bg-white p-3 rounded shadow-sm hover:bg-gray-50 transition">
-                        <strong>{res.Email}</strong> reserved this room <strong>{res.StartTime} - {res.EndTime}</strong>
-                      </li>
-                  ))}
-                </ul>
-              }
-            </div>
 
+                {/* Reserve Button */}
+                <button
+                    onClick={() => {
+                      addUserReservations(
+                          room.buildingId,
+                          room.roomNumber,
+                          date_to_str(date),
+                          startTime,
+                          endTime
+                      )
+                    }}
+                    className="px-5 py-2 bg-[#e74c3c] text-white rounded-md hover:bg-[#d44233] transition-colors duration-300"
+                >
+                  Reserve for {date_to_str(date)}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

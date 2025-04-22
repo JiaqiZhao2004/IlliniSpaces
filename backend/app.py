@@ -253,26 +253,29 @@ def get_user_reservations():
 
 @app.route('/user/reservations', methods=['POST'])
 def add_user_reservations():
+
+    # TODO: prevent overlapping reservations!
+
     try:
         uid = get_user_id(request)  # get UID from the request
     except ValueError as e:
         return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
     
     data = request.json
+    building_id = data.get('BuildingId')
     room_number = data.get('RoomNumber')
-    building_name = data.get('BuildingName')
     date = data.get('Date')
     start_time = data.get('StartTime')
     end_time = data.get('EndTime')
     
-    if not uid or not room_number or not building_name or not date or not start_time or not end_time:
-        return jsonify({'error': 'UID, RoomNumber, BuildingName, Date, StartTime, EndTime are required'}), 400
+    if not uid or not room_number or not building_id or not date or not start_time or not end_time:
+        return jsonify({'error': 'UID, RoomNumber, BuildingId, Date, StartTime, EndTime are required'}), 400
     
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
-        cursor.execute("INSERT INTO UserReservations (UID, RoomNumber, BuildingName, Date, StartTime, EndTime) VALUES %s, %s, %s, %s, %s, %s)", 
-                       (uid, room_number, building_name, date, start_time, end_time))
+        cursor.execute("INSERT INTO UserReservations (UID, RoomNumber, BuildingId, Date, StartTime, EndTime) VALUES (%s, %s, %s, %s, %s, %s)",
+                       (uid, room_number, building_id, date, start_time, end_time))
         connection.commit()
     except mysql.connector.Error as err:
         connection.rollback()
