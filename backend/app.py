@@ -283,6 +283,55 @@ def add_user_reservations():
     
     return jsonify({'message': 'User Reservation added successfully'}), 201
 
+
+@app.route('/reservations/search', methods=['GET'])
+def search_reservations():
+    """
+    Search existing reservations (now only support user reservations, not hard reservations)
+    input: BuildingId, RoomNumber, Date
+    :return: list of matching UserReservations(UID, ReservationId, StartTime, EndTime)
+    """
+
+    try:
+        uid = get_user_id(request)  # get UID from the request
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
+
+    print(uid)
+    room_number = request.args.get('RoomNumber')
+    building_id = request.args.get('BuildingId')
+    date = request.args.get('Date')
+    # weekday = datetime(date.year, date.month, date.day).isoweekday()  # 1 to 7
+
+    if not uid or not room_number or not building_id or not date:
+        return jsonify({'error': 'UID, RoomNumber, BuildingId, Date are required'}), 400
+
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    try:
+        cursor.execute(
+            "SELECT Email, ReservationId, StartTime, EndTime "
+            "FROM UserReservations NATURAL JOIN Users "
+            "WHERE Date = %s AND BuildingId = %s AND RoomNumber = %s "
+            "ORDER BY StartTime, EndTime DESC", (date, building_id, room_number))
+        user_reservations = cursor.fetchall()
+        print(user_reservations)
+
+        # TODO: add hard reservations
+        # cursor.execute(
+        #     "SELECT * FROM HardReservations "
+        #             "WHERE Date = %s AND BuildingId = %s AND RoomNumber = %s",
+        #     (date, building_id, room_number))
+        # connection.commit()
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    return jsonify({'reservations': user_reservations}), 200
+
 @app.route('/buildings', methods=['GET'])
 def get_buildings():
     connection = get_db_connection()

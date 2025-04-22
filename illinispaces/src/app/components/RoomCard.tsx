@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import { Building2Icon, UsersIcon, LayoutIcon } from "lucide-react";
+import {useAuth} from "@clerk/nextjs";
 
 // Define the expected room object structure
 export interface Room {
@@ -15,7 +16,41 @@ interface RoomCardProps {
 
 export function RoomCard({ room }: RoomCardProps) {
 
+  const { getToken } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [reservations, setReservations] = useState([]);
+  var today = new Date();
+  var dd = String(today.getDate()).padStart(2, '0');
+  var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  var yyyy = today.getFullYear();
+  var today_str = yyyy + '-' + mm + '-' + dd;
+
+  // UserReservation ONLY, Hard Reservations is not yet included
+  const fetchUserReservations = async (BuildingId, RoomNumber, Date) => {
+    const token = await getToken();
+
+    const params = new URLSearchParams({
+      BuildingId: BuildingId, // "DKH"
+      RoomNumber: RoomNumber,  // "102"
+      Date: Date  // "2025-04-21"
+    });
+    try {
+      const response = await fetch(`http://localhost:8080/reservations/search?${params.toString()}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err?.error || "Failed to fetch reservations");
+      }
+      console.log(response)
+      const data = await response.json();
+      setReservations(data.reservations)
+    } catch (err) {
+      console.error("Error:", err);
+    }
+  };
 
   return (
     <>
@@ -43,7 +78,10 @@ export function RoomCard({ room }: RoomCardProps) {
       </div>
       <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
         <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {
+              setIsModalOpen(true);
+              fetchUserReservations(room.buildingId, room.roomNumber, today_str);
+            }}
             className="w-full py-2 bg-[#e74c3c] text-white rounded-md hover:bg-[#d44233] transition-colors duration-300">
           View Status
         </button>
@@ -77,9 +115,9 @@ export function RoomCard({ room }: RoomCardProps) {
             <div className="w-2/3 bg-gray-100 rounded-lg p-4 overflow-y-auto border border-gray-200">
               <h3 className="text-xl font-semibold mb-4">Status History</h3>
               <ul className="space-y-2">
-                {Array.from({length: 30}).map((_, idx) => (
+                {reservations.map((res, idx) => (
                     <li key={idx} className="bg-white p-3 rounded shadow-sm hover:bg-gray-50 transition">
-                      Status update #{idx + 1}: Something happened here...
+                      <strong>{res.Email}</strong> reserved this room <strong>{res.StartTime} - {res.EndTime}</strong>
                     </li>
                 ))}
               </ul>
