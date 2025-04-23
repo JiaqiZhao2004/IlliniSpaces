@@ -1,4 +1,4 @@
-import os
+import os, re
 from dotenv import load_dotenv
 import mysql.connector
 from flask import Flask, request, jsonify
@@ -366,7 +366,21 @@ def get_buildings():
 
     return jsonify({'buildings': results}), 200
 
-@app.route('/nearestRooms', methods=['GET'])
+def validate_decimal_precision(value, total_digits, decimal_places):
+    try:
+        float_val = float(value)
+    except ValueError:
+        return False
+
+    str_val = str(abs(float_val))
+    if '.' in str_val:
+        int_part, dec_part = str_val.split('.')
+    else:
+        int_part, dec_part = str_val, ''
+
+    return len(int_part + dec_part) <= total_digits and len(dec_part) <= decimal_places
+
+@app.route('/nearestBuildings', methods=['GET'])
 def nearest_rooms():
     try:
         lat = float(request.args.get('lat'))
@@ -374,6 +388,17 @@ def nearest_rooms():
         current_date = request.args.get('date')   # format: 'YYYY-MM-DD'
         current_time = request.args.get('time')   # format: 'HH:MM'
         max_results = int(request.args.get('max', 5))
+
+        if not validate_decimal_precision(lat, 10, 8):
+            return jsonify({'error': 'Invalid latitude format or range'}), 400
+        lat = float(lat)
+        if not validate_decimal_precision(lng, 11, 8):
+            return jsonify({'error': 'Invalid longitude format or range'}), 400
+        lng = float(lng)
+        if not re.match(r'^\d{4}-\d{2}-\d{2}$', current_date):
+            return jsonify({'error': 'Invalid date format'}), 400
+        if not re.match(r'^\d{2}:\d{2}$', current_time):
+            return jsonify({'error': 'Invalid time format'}), 400
 
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -400,6 +425,11 @@ def available_rooms():
         current_date = request.args.get('date')
         current_time = request.args.get('time')
 
+        if not re.match(r'^\d{4}-\d{2}-\d{2}$', current_date):
+            return jsonify({'error': 'Invalid date format'}), 400
+        if not re.match(r'^\d{2}:\d{2}$', current_time):
+            return jsonify({'error': 'Invalid time format'}), 400
+        
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
