@@ -366,6 +366,58 @@ def get_buildings():
 
     return jsonify({'buildings': results}), 200
 
+@app.route('/nearestRooms', methods=['GET'])
+def nearest_rooms():
+    try:
+        lat = float(request.args.get('lat'))
+        lng = float(request.args.get('lng'))
+        current_date = request.args.get('date')   # format: 'YYYY-MM-DD'
+        current_time = request.args.get('time')   # format: 'HH:MM'
+        max_results = int(request.args.get('max', 5))
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc('GetNearestAvailableBuildings', [lat, lng, current_date, current_time, max_results])
+
+        # Fetch results from procedure
+        results = []
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        return jsonify(results)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+@app.route('/availableRooms', methods=['GET'])
+def available_rooms():
+    try:
+        current_date = request.args.get('date')
+        current_time = request.args.get('time')
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc('GetAvailableRoomsWithMetadata', [current_date, current_time])
+
+        results = []
+        for result in cursor.stored_results():
+            results.extend(result.fetchall())
+
+        return jsonify(results)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
 # TODO: UPDATE method for User
 # @app.route('/users', methods=['UPDATE'])
 # def update_user():
