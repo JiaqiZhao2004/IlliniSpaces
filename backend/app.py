@@ -265,8 +265,6 @@ def get_user_reservations():
 @app.route('/user/reservations', methods=['POST'])
 def add_user_reservations():
 
-    # TODO: prevent overlapping reservations!
-
     try:
         uid = get_user_id(request)  # get UID from the request
     except ValueError as e:
@@ -278,13 +276,43 @@ def add_user_reservations():
     date = data.get('Date')
     start_time = data.get('StartTime')
     end_time = data.get('EndTime')
-    
-    if not uid or not room_number or not building_id or not date or not start_time or not end_time:
-        return jsonify({'error': 'UID, RoomNumber, BuildingId, Date, StartTime, EndTime are required'}), 400
-    
+
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
+        connection.start_transaction()
+
+        cursor.execute("""
+                    SELECT BuildingName, COUNT(*) FROM UserReservations NATURAL JOIN Buildings
+                    WHERE UID = %s AND YEARWEEK(Date, 1) = YEARWEEK(%s, 1)
+                    GROUP BY BuildingName
+                    """,(uid, date))
+        existing_reservations = cursor.fetchall()
+        if existing_reservations:
+            data = {}
+            total_reservations = 0
+            for reservation in existing_reservations:
+                data[reservation[0]] = reservation[1]
+                total_reservations += reservation[1]
+            if total_reservations > 5:
+                return jsonify({'error': f'You already have 5 reservations in a week: {data}'}), 400
+
+        cursor.execute("""
+            SELECT ReservationId AS id FROM UserReservations
+            WHERE BuildingId = %s AND RoomNumber = %s AND EndTime > %s AND StartTime < %s AND Date = %s
+            UNION ALL
+            Select EventId AS id FROM HardReservations
+            WHERE BuildingId = %s AND RoomNumber = %s AND EndTime > %s AND StartTime < %s
+            AND Repeats LIKE %s
+            """, (
+            building_id, room_number, start_time, end_time, date,
+            building_id, room_number, start_time, end_time, f"%{get_weekday_letter(date)}%"
+        ))
+        conflicts = cursor.fetchall()
+        num_conflicts = len(conflicts)
+        if num_conflicts:
+            return jsonify({'error': f'Conflicted with {num_conflicts} reservations. Try another slot.'}), 409
+
         cursor.execute("INSERT INTO UserReservations (UID, RoomNumber, BuildingId, Date, StartTime, EndTime) VALUES (%s, %s, %s, %s, %s, %s)",
                        (uid, room_number, building_id, date, start_time, end_time))
         connection.commit()
@@ -460,6 +488,11 @@ def available_rooms():
 #
 #     return jsonify({'message': 'User updated successfully'}), 200
 
+def get_weekday_letter(date_str: str):
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    weekday_index = date_obj.weekday()  # 0 = Monday, 6 = Sunday
+    letters = ['M', 'T', 'W', 'R', 'F', 'S', 'U']  # R = Thursday, U = Sunday
+    return letters[weekday_index]
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))

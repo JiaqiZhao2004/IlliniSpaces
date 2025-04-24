@@ -3,6 +3,7 @@ import {useAuth} from "@clerk/nextjs";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Building2Icon, UsersIcon, LayoutIcon, Star } from "lucide-react";
+import {Alert} from "@/app/components/Alert";
 
 // Define the expected room object structure
 export interface Room {
@@ -22,6 +23,7 @@ export function RoomCard({ room, isFavorite, onToggleFavorite }: RoomCardProps) 
 
   const { getToken } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alert, setAlert] = useState<{ message: string; type: "success" | "error" | "warning" } | null>(null);
   const [reservations, setReservations] = useState([]);
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("00:00");
@@ -33,6 +35,10 @@ export function RoomCard({ room, isFavorite, onToggleFavorite }: RoomCardProps) 
 
   // UserReservation ONLY, Hard Reservations is not yet included
   const addUserReservations = async (BuildingId, RoomNumber, Date, StartTime, EndTime) => {
+    if (EndTime <= StartTime) {
+      setAlert({ message: "End time must be after start time", type: "warning" });
+      return
+    }
     const token = await getToken();
 
     try {
@@ -50,6 +56,12 @@ export function RoomCard({ room, isFavorite, onToggleFavorite }: RoomCardProps) 
           EndTime: EndTime
         })
       })
+      const msg = await response.json()
+      if (response.ok) {
+        setAlert({ message: "Reservation successful!", type: "success" });
+      } else if (response.status == 400 || response.status == 409) {
+        setAlert({ message: msg["error"], type: "error" });
+      }
     } catch (err) {
       console.error("Error:", err);
     }
@@ -203,6 +215,13 @@ export function RoomCard({ room, isFavorite, onToggleFavorite }: RoomCardProps) 
                     </ul>
                 }
               </div>
+              {alert && (
+                  <Alert
+                    message={alert.message}
+                    type={alert.type}
+                    onClose={() => setAlert(null)}
+                  />
+                )}
               <div className="mt-4 pt-4 border-t border-gray-300 flex items-center justify-end gap-4">
                 {/* Time inputs */}
                 <div className="flex gap-2 items-center">
@@ -232,9 +251,13 @@ export function RoomCard({ room, isFavorite, onToggleFavorite }: RoomCardProps) 
                           date_to_str(date),
                           startTime,
                           endTime
-                      )
+                      ).then(() => fetchUserReservations(room.buildingId, room.roomNumber, date_to_str(date)));
                     }}
-                    className="px-5 py-2 bg-[#e74c3c] text-white rounded-md hover:bg-[#d44233] transition-colors duration-300"
+                    className="px-5 py-2 bg-[#e74c3c] text-white rounded-md
+                               hover:bg-[#d44233] active:bg-[#c7372a]
+                               border border-transparent active:border-[#a52a1a]
+                               active:ring-2 active:ring-[#a52a1a] active:ring-offset-1
+                               transition-all duration-200 ease-in-out"
                 >
                   Reserve for {date_to_str(date)}
                 </button>
