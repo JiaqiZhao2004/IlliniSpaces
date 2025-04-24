@@ -343,8 +343,6 @@ def search_reservations():
     building_id = request.args.get('BuildingId')
     date = request.args.get('Date')
     # TODO: Add weekday-dependent building opening and closing time
-    # TODO: Add hard reservations
-    # weekday = datetime(date.year, date.month, date.day).isoweekday()  # 1 to 7
 
     if not uid or not room_number or not building_id or not date:
         return jsonify({'error': 'UID, RoomNumber, BuildingId, Date are required'}), 400
@@ -355,19 +353,19 @@ def search_reservations():
         # TODO: Add building opening and closing time
         # cursor.execute("SELECT ?? FROM Buildings WHERE BuildingId = %s", (building_id,))
 
-        cursor.execute(
-            "SELECT Email, ReservationId, StartTime, EndTime "
-            "FROM UserReservations NATURAL JOIN Users "
-            "WHERE Date = %s AND BuildingId = %s AND RoomNumber = %s "
-            "ORDER BY StartTime, EndTime DESC", (date, building_id, room_number))
-        user_reservations = cursor.fetchall()
-
-        # TODO: add hard reservations
-        # cursor.execute(
-        #     "SELECT * FROM HardReservations "
-        #             "WHERE Date = %s AND BuildingId = %s AND RoomNumber = %s",
-        #     (date, building_id, room_number))
-        # connection.commit()
+        cursor.execute("""
+            SELECT Email AS Host, StartTime, EndTime 
+            FROM UserReservations NATURAL JOIN Users 
+            WHERE Date = %s AND BuildingId = %s AND RoomNumber = %s 
+            UNION ALL 
+            SELECT CONCAT(EventName, ' (CRN: ', EventId, ')') AS Host, StartTime, EndTime 
+            FROM HardReservations
+            WHERE Repeats LIKE %s AND BuildingId = %s AND RoomNumber = %s
+            ORDER BY StartTime, EndTime DESC
+            """, (
+            date, building_id, room_number,
+            f"%{get_weekday_letter(date)}%", building_id, room_number))
+        reservations = cursor.fetchall()
 
     except mysql.connector.Error as err:
         return jsonify({'error': str(err)}), 500
@@ -375,7 +373,7 @@ def search_reservations():
         cursor.close()
         connection.close()
 
-    return jsonify({'reservations': user_reservations}), 200
+    return jsonify({'reservations': reservations}), 200
 
 @app.route('/buildings', methods=['GET'])
 def get_buildings():

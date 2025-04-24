@@ -208,7 +208,7 @@ export function RoomCard({ room, isFavorite, onToggleFavorite }: RoomCardProps) 
                     <ul className="space-y-2">
                       {reservations.map((res, idx) => (
                           <li key={idx} className="bg-white p-3 rounded shadow-sm hover:bg-gray-50 transition">
-                            <strong>{res.Email}</strong> reserved this
+                            <strong>{res.Host}</strong> reserved this
                             room <strong>{res.StartTime} - {res.EndTime}</strong>
                           </li>
                       ))}
