@@ -280,6 +280,7 @@ def add_user_reservations():
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
+        cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
         connection.start_transaction()
 
         cursor.execute("""
