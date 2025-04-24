@@ -14,6 +14,28 @@ export function RoomDashboard() {
 
   const { getToken } = useAuth();
 
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const token = await getToken();
+      try {
+        const res = await fetch("http://localhost:8080/favorites", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch favorites");
+  
+        const data = await res.json();
+        const favoritesSet = new Set<string>(data.favorites);
+        setFavoriteBuildings(favoritesSet);
+      } catch (err) {
+        console.error("Error fetching favorites:", err);
+      }
+    };
+  
+    fetchFavorites();
+  }, []);
+
   const toggleFavorite = async (buildingId: string) => {
     const newSet = new Set(favoriteBuildings);
     const isCurrentlyFavorite = newSet.has(buildingId);
