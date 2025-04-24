@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { RoomCard } from "./RoomCard";
 import { SearchIcon, FilterIcon } from "lucide-react";
-import { sampleRooms, Room } from "./sampleRooms";
+import { Room } from "./sampleRooms";
 import { useAuth } from "@clerk/nextjs";
 
 const ROOMS_PER_PAGE = 32;
@@ -11,6 +11,36 @@ export function RoomDashboard() {
   const [filterType, setFilterType] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [favoriteBuildings, setFavoriteBuildings] = useState<Set<string>>(new Set());
+  const [sampleRooms, setSampleRooms] = useState<Room[]>([]);
+
+  useEffect(() => {
+    const now = new Date();
+    const timeString = now.toTimeString().slice(0, 5);
+    const dateString = now.toISOString().slice(0, 10);
+    const params = new URLSearchParams({
+      date: dateString,
+      time: timeString,
+    });
+    const fetchRooms = async () => {
+      try {
+        const res = await fetch(`http://localhost:8080/availableRooms?${params}`);
+        if (!res.ok) throw new Error("Failed to fetch rooms");
+        const rawRooms = await res.json();
+        const rooms: Room[] = rawRooms.rooms.map((r: any) => ({
+          buildingId: r.BuildingId,
+          roomNumber: r.RoomNumber,
+          capacity: r.Capacity,
+          type: r.Type,
+          buildingName: r.BuildingName,
+        }));
+        setSampleRooms(rooms);
+       } catch (err) {
+        console.error("Error fetching rooms:", err);
+      }
+    }
+    fetchRooms();
+  }
+  , []);
 
   const { getToken } = useAuth();
 
@@ -19,6 +49,7 @@ export function RoomDashboard() {
       const token = await getToken();
       try {
         const res = await fetch("http://localhost:8080/favorites", {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -74,12 +105,15 @@ export function RoomDashboard() {
 
   const filteredRooms = sampleRooms.filter((room) => {
     const searchQuery = searchTerm.toLowerCase();
+  
     const matchesSearch =
       room.buildingId.toLowerCase().includes(searchQuery) ||
+      room.buildingName.toLowerCase().includes(searchQuery) ||
       room.roomNumber.toLowerCase().includes(searchQuery) ||
-      room.type.toLowerCase().includes(searchQuery);
-
+      (room.type?.toLowerCase().includes(searchQuery) ?? false);
+  
     const matchesType = filterType ? room.type === filterType : true;
+  
     return matchesSearch && matchesType;
   });
 

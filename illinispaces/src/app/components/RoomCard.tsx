@@ -4,14 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Building2Icon, UsersIcon, LayoutIcon, Star } from "lucide-react";
 import {Alert} from "@/app/components/Alert";
-
-// Define the expected room object structure
-export interface Room {
-  buildingId: string;
-  roomNumber: string;
-  capacity: number;
-  type: string;
-}
+import { Room } from "@/app/components/sampleRooms";
 
 interface RoomCardProps {
   room: Room;
@@ -126,7 +119,7 @@ export function RoomCard({ room, isFavorite, onToggleFavorite }: RoomCardProps) 
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
               <Building2Icon className="h-5 w-5 text-[#e74c3c] mr-2"/>
-              <span className="text-gray-700">Building: {room.buildingId}</span>
+              <span className="text-gray-700">Building: {room.buildingName}</span>
             </div>
             <button
                 onClick={() => onToggleFavorite(room.buildingId)}

@@ -465,8 +465,8 @@ def available_rooms():
         results = []
         for result in cursor.stored_results():
             results.extend(result.fetchall())
-
-        return jsonify(results)
+        print("Available rooms:", results)
+        return jsonify({"rooms": results})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
