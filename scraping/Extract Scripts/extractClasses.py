@@ -60,6 +60,9 @@ def parse_xml_file(file_path):
     try:
         roomNumber = root.find("meetings/meeting/roomNumber", ns).text.strip()
         buildingName = root.find("meetings/meeting/buildingName", ns).text.strip()
+        if roomNumber.startswith("ARR") or buildingName.startswith("ARR"):
+            print(f"Skipping ARRANGED {subjectCode}/{courseNumber}/{crn}")
+            return None
     except (KeyError, AttributeError):
         print(f"Skipping NO LOCATION {subjectCode}/{courseNumber}/{crn}")
         return None

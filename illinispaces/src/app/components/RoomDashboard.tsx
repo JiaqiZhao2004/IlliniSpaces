@@ -1,18 +1,47 @@
 import React, { useState, useEffect } from "react";
 import { RoomCard } from "./RoomCard";
 import { SearchIcon, FilterIcon } from "lucide-react";
-import { sampleRooms, Room } from "./sampleRooms";
 import { useAuth } from "@clerk/nextjs";
 
 const ROOMS_PER_PAGE = 32;
+
+export interface Room {
+    BuildingId: string;
+    RoomNumber: string;
+    Capacity: number;
+    Type: string;
+}
 
 export function RoomDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [favoriteBuildings, setFavoriteBuildings] = useState<Set<string>>(new Set());
+  const [rooms, setRooms] = useState<Room[]>([])
 
   const { getToken } = useAuth();
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      const token = await getToken();
+
+      try {
+        const res = await fetch(`http://localhost:8080/rooms`, {
+          headers: {
+            method: "GET",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await res.json();
+        console.log(data);
+        setRooms(data);
+      } catch (err) {
+        console.error("Error fetching rooms:", err);
+      }
+    }
+
+    fetchRooms();
+  }, []);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -72,21 +101,22 @@ export function RoomDashboard() {
     }
   };
 
-  const filteredRooms = sampleRooms.filter((room) => {
-    const searchQuery = searchTerm.toLowerCase();
+  const filteredRooms = rooms.filter((room) => {
+    const searchQuery = searchTerm.toLowerCase().replaceAll(' ', '');
     const matchesSearch =
-      room.buildingId.toLowerCase().includes(searchQuery) ||
-      room.roomNumber.toLowerCase().includes(searchQuery) ||
-      room.type.toLowerCase().includes(searchQuery);
+      room.BuildingId.toLowerCase().includes(searchQuery) ||
+      room.RoomNumber.toLowerCase().includes(searchQuery) ||
+      (room.BuildingId + room.RoomNumber).toLowerCase().includes(searchQuery) ||
+      (room.Type && room.Type.toLowerCase().includes(searchQuery));
 
-    const matchesType = filterType ? room.type === filterType : true;
+    const matchesType = filterType ? room.Type === filterType : true;
     return matchesSearch && matchesType;
   });
 
   const totalPages = Math.ceil(filteredRooms.length / ROOMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROOMS_PER_PAGE;
   const paginatedRooms = filteredRooms.slice(startIndex, startIndex + ROOMS_PER_PAGE);
-  const roomTypes = [...new Set(sampleRooms.map((room) => room.type))];
+  const roomTypes = [...new Set(rooms.map((room) => room.Type))];
 
   return (
     <main className="flex-1 container mx-auto py-8 px-4 w-full">
@@ -135,11 +165,11 @@ export function RoomDashboard() {
       {/* Room Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
         {paginatedRooms.length > 0 ? (
-          paginatedRooms.map((room, index) => (
+          paginatedRooms.map((room, id) => (
             <RoomCard
-              key={index}
               room={room}
-              isFavorite={favoriteBuildings.has(room.buildingId)}
+              key={id}
+              isFavorite={favoriteBuildings.has(room.BuildingId)}
               onToggleFavorite={toggleFavorite}
             />
           ))

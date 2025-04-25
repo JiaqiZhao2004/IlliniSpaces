@@ -393,6 +393,21 @@ def get_buildings():
 
     return jsonify({'buildings': results}), 200
 
+@app.route('/rooms', methods=['GET'])
+def get_rooms():
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT * FROM Rooms")
+        rooms = cursor.fetchall()
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    return jsonify(rooms), 200
+
 def validate_decimal_precision(value, total_digits, decimal_places):
     try:
         float_val = float(value)

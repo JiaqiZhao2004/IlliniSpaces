@@ -26,6 +26,7 @@ def get_db_connection():
 def get_lat_lon(building_name: str):
 
     renames = {
+        "Illini Union": "Illini Union 1401",
         "Literatures, Cultures & Linguistics Building": "Foreign Languages Building",
         "Speech & Hearing Science Bldg": "Department of Speech and Hearing Science",
         "Lincoln Hall Theater": "Lincoln Hall",
@@ -51,11 +52,11 @@ def get_lat_lon(building_name: str):
         "Colonel Wolfe School": "403 E Healey St, Champaign, IL 61820",
         "Ctr Wounded Veterans Higher Ed": "908 W Nevada St, Urbana, IL 61801",
         "Electrical & Computer Eng Bldg": "306 N Wright St, Urbana, IL 61801",
-        "E R Madigan Laboratory": "1201 W Gregory Dr, Urbana, IL 61801",
+        "E R Madigan Laboratory": "Edward R. Madigan Laboratory",
         "FAR - Food Service Building": "Florida Avenue Residence Halls",
         "FAR Meeting Space": "Florida Avenue Residence Halls",
         "Fighting Illini Ctr for Excellence": "1700 S 4th St, Champaign, IL 61820",
-        "Fire Service Institute Center": "11 Gerty Dr, Champaign, IL 61820",
+        "Fire Service Institute Center": "Fire Service Institute",
         "Fred Turner Student Serv Bldg": "610 E John St, Champaign, IL 61820",
         "Garner Hall": "201 E Gregory Dr, Champaign, IL 61820",
         "Gregory Dr. Food Service": "301 E Gregory Dr, Champaign, IL 61820",
@@ -69,21 +70,21 @@ def get_lat_lon(building_name: str):
         "Illinois Street Residence Lng": "1010 W Illinois St, Urbana, IL 61801",
         "Krannert Center for Perf Arts": "500 S Goodwin Ave, Urbana, IL 61801",
         "Lincoln Avenue Residence Hall": "1005 W Illinois St, Urbana, IL 61801",
-        "Law Building": "504 E Pennsylvania Ave, Champaign, IL 61820",
+        "Law Building": "University of Illinois College of Law",
         "Sidney Lu Mech Engr Bldg": "1206 W Green St, Urbana, IL 61801",
         "Micro & Nanotechnology Lab": "208 N Wright St, Urbana, IL 61801",
         "Seitz Materials Research Lab": "104 S Goodwin Ave, Urbana, IL 61801",
-        "Materials Science & Eng Bld": "1304 W Green St, Urbana, IL 61801",
+        "Materials Science & Eng Bld": "Materials Science & Engineering Building Champaign County",
         "Meat Science Laboratory": "1503 S Maryland Dr, Urbana, IL 61801",
-        "Civil & Envir Eng Bldg": "205 N Mathews Ave, Urbana, IL 61801",
-        "Newmark Civil Engineering Bldg": "205 N Mathews Ave, Urbana, IL 61801",
+        "Civil & Envir Eng Bldg": "Newmark Civil Engineering Laboratory",
+        "Newmark Civil Engineering Bldg": "Newmark Civil Engineering Laboratory",
         "Nat Center for Suprcomp Appl": "1205 W Clark St, Urbana, IL 61801",
         "Nuclear Engineering Lab": "103 S Goodwin Ave, Urbana, IL 61801",
         "Nuclear Radiations Laboratory": "103 S Goodwin Ave, Urbana, IL 61801",
         "Natural Res Studies Annex": "40.091290, -88.242558",
         "National Soybean Res Ctr": "National Soybean",
-        "Optical Physics & Eng Bldg.": "405 N Mathews Ave, Urbana, IL 61801",
-        "Optical Physics & Eng Lab": "405 N Mathews Ave, Urbana, IL 61801",
+        "Optical Physics & Eng Bldg.": "40.111358, -88.229471",
+        "Optical Physics & Eng Lab": "40.111358, -88.229471",
         "Peabody Food Serv Bldg": "301 E Peabody Dr, Champaign, IL 61820",
         "Pennsylvania Lounge Bld - PAR": "Pennsylvania Avenue Residence Halls",
         "Willard Airport: Q1": "11 Airport Rd, Savoy, IL 61874",
@@ -93,7 +94,7 @@ def get_lat_lon(building_name: str):
         "Willard Airport: Q7": "11 Airport Rd, Savoy, IL 61874",
         "Willard Airport: Q8": "11 Airport Rd, Savoy, IL 61874",
         "Rehabilitation Educ Ctr": "1207 S Oak St, Champaign, IL 61820",
-        "Richmond Studio": "1002 S Goodwin Ave, Urbana, IL 61801",
+        "Richmond Studio": "40.114815, -88.223530",
         "Sculpture Building": "408 E Peabody Dr, Champaign, IL 61820",
         "Student Dining & Res Program": "301 E Gregory Dr, Champaign, IL 61820",
         "South Farms": "3601 S Race St, Urbana, IL 61802",
@@ -154,12 +155,12 @@ def get_lat_lon(building_name: str):
 
 def insert_building_data(buildings_df, cursor):
     for _, row in buildings_df.iterrows():
-        cursor.execute("""
-            select * from Buildings where BuildingName = %s
-        """, (row['BuildingName'],))
-        building = cursor.fetchone()
-        if building:
-            continue
+        # cursor.execute("""
+        #     select * from Buildings where BuildingName = %s
+        # """, (row['BuildingName'],))
+        # building = cursor.fetchone()
+        # if building:
+        #     continue
 
         latitude, longitude = get_lat_lon(row['BuildingName'])
         if not (latitude and longitude):
