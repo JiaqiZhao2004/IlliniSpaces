@@ -19,7 +19,7 @@ def get_db_connection():
     db_pass = os.getenv('DB_PASS')
     db_name = os.getenv('DB_NAME')
     public_ip = os.getenv('PUBLIC_IP')
-    
+
     connection = mysql.connector.connect(
         user=db_user,
         password=db_pass,
@@ -56,7 +56,7 @@ def get_email(request):
             raise ValueError(f"Failed to fetch user data: {response.status_code} {response.text}")
     except Exception as e:
         raise ValueError("Invalid or expired token") from e
-    
+
 def get_user_id(request):
     """Fetch the user ID from the database using the email."""
     email = get_email(request)
@@ -84,13 +84,13 @@ def add_favorite():
         uid = get_user_id(request)  # get UID from the request
     except ValueError as e:
         return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
-    
+
     data = request.json
     building_id = data.get('BuildingId')
-    
+
     if not uid or not building_id:
         return jsonify({'error': 'UID and BuildingId are required'}), 400
-    
+
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
@@ -102,7 +102,7 @@ def add_favorite():
     finally:
         cursor.close()
         connection.close()
-    
+
     return jsonify({'message': 'Favorite added successfully'}), 201
 
 # Get all favorites for a user
@@ -118,7 +118,7 @@ def get_favorites():
     favorites = cursor.fetchall()
     cursor.close()
     connection.close()
-    
+
     return jsonify({'favorites': [fav[0] for fav in favorites]}), 200
 
 # Delete a favorite
@@ -130,10 +130,10 @@ def delete_favorite():
         return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
     data = request.json
     building_id = data.get('BuildingId')
-    
+
     if not uid or not building_id:
         return jsonify({'error': 'UID and BuildingId are required'}), 400
-    
+
     connection = get_db_connection()
     cursor = connection.cursor()
     try:
@@ -145,7 +145,7 @@ def delete_favorite():
     finally:
         cursor.close()
         connection.close()
-    
+
     return jsonify({'message': 'Favorite deleted successfully'}), 200
 
 @app.route('/users', methods=['POST'])
@@ -269,7 +269,7 @@ def add_user_reservations():
         uid = get_user_id(request)  # get UID from the request
     except ValueError as e:
         return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
-    
+
     data = request.json
     building_id = data.get('BuildingId')
     room_number = data.get('RoomNumber')
@@ -323,7 +323,7 @@ def add_user_reservations():
     finally:
         cursor.close()
         connection.close()
-    
+
     return jsonify({'message': 'User Reservation added successfully'}), 201
 
 
@@ -428,21 +428,6 @@ def get_buildings():
 
     return jsonify({'buildings': results}), 200
 
-@app.route('/rooms', methods=['GET'])
-def get_rooms():
-    connection = get_db_connection()
-    cursor = connection.cursor(dictionary=True)
-    try:
-        cursor.execute("SELECT * FROM Rooms")
-        rooms = cursor.fetchall()
-    except mysql.connector.Error as err:
-        return jsonify({'error': str(err)}), 500
-    finally:
-        cursor.close()
-        connection.close()
-
-    return jsonify(rooms), 200
-
 def validate_decimal_precision(value, total_digits, decimal_places):
     try:
         float_val = float(value)
@@ -496,8 +481,8 @@ def nearest_rooms():
         if cursor: cursor.close()
         if conn: conn.close()
 
-@app.route('/availableRooms', methods=['GET'])
-def available_rooms():
+@app.route('/rooms', methods=['GET'])
+def get_rooms():
     try:
         current_date = request.args.get('date')
         current_time = request.args.get('time')
@@ -506,16 +491,16 @@ def available_rooms():
             return jsonify({'error': 'Invalid date format'}), 400
         if not re.match(r'^\d{2}:\d{2}$', current_time):
             return jsonify({'error': 'Invalid time format'}), 400
-        
+
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
-        cursor.callproc('GetAvailableRoomsWithMetadata', [current_date, current_time])
+        cursor.callproc('GetRoomsWithMetadata', [current_date, current_time])
 
         results = []
         for result in cursor.stored_results():
             results.extend(result.fetchall())
-
+        print("Rooms:", results)
         return jsonify(results)
 
     except Exception as e:
