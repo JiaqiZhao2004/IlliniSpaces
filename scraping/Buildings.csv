@@ -1,44 +1,195 @@
-BuildingName,BuildingId,OpenTime_MTWRF,CloseTime_MTWR,CloseTime_F,OpenTime_Sat,CloseTime_Sat,OpenTime_Sun,CloseTime_Sun
-Digital Computer Laboratory,DCL,06:45,22:00,22:00,11:00,22:00,11:00,22:00
-Chemistry Annex,CA,07:00,21:00,21:00,11:00,21:00,11:00,21:00
-Natural History Building,NHB,07:00,22:00,21:00,07:00,17:00,12:00,22:00
-"Literatures, Cultures & Linguistics Building",LCLB,07:00,22:00,18:00,07:00,18:00,12:00,22:00
-Lincoln Hall,LH,07:00,23:00,23:00,07:00,23:00,12:00,23:00
-Wohlers Hall,WOHLR,07:00,23:00,21:00,07:00,21:00,12:00,23:00
-Campus Instructional Facility,CIF,07:00,23:00,21:00,09:00,21:00,12:00,23:00
-Mumford Hall,MH,07:00,21:00,18:00,07:00,18:00,12:00,18:00
-English Building,EB,07:00,23:59,22:00,07:00,22:00,12:00,23:59
-Library,LIB,08:30,22:00,18:00,13:00,17:00,13:00,22:00
-Noyes Laboratory,NOYES,07:00,21:00,21:00,13:00,18:00,13:00,20:00
-Architecture Building,ARCH,06:30,22:00,17:00,06:30,17:00,06:30,22:00
-Huff Hall,HUFF,07:00,22:00,18:00,10:00,18:00,06:00,22:00
-Ceramics Building,CB,07:00,22:00,22:00,07:00,22:00,07:00,22:00
-Siebel Center for Computer Science,SIEBL,07:00,21:30,21:30,07:00,21:30,07:00,21:30
-Armory,ARMRY,05:00,22:30,22:00,07:00,21:00,07:00,21:00
-Transportation Building,TB,07:00,21:00,21:00,07:00,21:00,07:00,21:00
-Gregory Hall,GH,07:00,23:59,23:59,07:00,23:59,07:00,23:59
-David Kinley Hall,DKH,07:00,23:59,23:00,07:00,18:00,09:30,23:59
-Animal Sciences Laboratory,ASL,07:00,21:00,18:00,07:00,12:00,closed,closed
-Materials Science & Engineering Building,MSEB,07:00,22:00,18:00,07:00,12:00,closed,closed
-Psychology Building,PSYCH,07:00,20:00,17:00,07:00,17:00,closed,closed
-Education Building,EDUC,07:00,21:00,21:00,07:00,18:00,closed,closed
-Bevier Hall,BEV,07:00,22:00,22:00,closed,closed,closed,closed
-Burrill Hall,BUR,07:00,19:00,19:00,closed,closed,closed,closed
-Davenport Hall,DH,07:00,18:30,18:30,closed,closed,closed,closed
-Engineering Hall,EH,07:00,21:00,18:00,closed,closed,closed,closed
-Everitt Laboratory,EVRT,07:00,21:00,18:00,closed,closed,closed,closed
-Loomis Laboratory of Physics,LMS,07:00,21:00,18:00,closed,closed,closed,closed
-Loomis Laboratory of Physics,LMS,07:00,21:00,18:00,closed,closed,closed,closed
-Medical Sciences Building,MSB,07:00,17:30,17:30,closed,closed,closed,closed
-National Soybean Research Center,NSRC,07:00,18:00,18:00,closed,closed,closed,closed
-Roger Adams Laboratory,RAL,07:00,18:00,18:00,closed,closed,closed,closed
-Sidney Lu Mechanical Engineering Building,LUMEB,07:00,21:00,18:00,closed,closed,closed,closed
-Speech & Hearing Science Building,SHS,07:30,17:30,17:30,closed,closed,closed,closed
-Turner Hall,TH,07:00,21:00,17:00,closed,closed,closed,closed
-Foellinger Auditorium,FA,events/class,events/class,events/class,events only,events only,events only,events only
-Henry Administration Building,HAB,07:00,17:30,17:30,locked,locked,locked,locked
-Wymer Hall,SWH,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
-Temple Hoyne Buell Hall,THBH,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
-Krannert Art Museum,KAM,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
-Altgeld Hall,AH,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
-Lincoln Hall Theater,LHT,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable,unavailable
+BuildingId,BuildingName
+1001N,1001 W Nevada
+1004F,"1004 S Fourth, Police Trng Ins"
+1010N,1010 W Nevada
+1203/,1203 1/2 W Nevada
+1203N,1203 W Nevada
+1203O,1203 W Oregon
+1205/,1205 1/2 W Nevada
+1205N,1205 W Nevada
+1205O,1205 W Oregon
+1206N,1206 W. Nevada Street
+1207O,1207 W Oregon
+1208N,1208 W Nevada
+1210N,Asian American House
+408G,408 S Goodwin
+505GR,505 E Green
+508SX,508 S Sixth
+510DA,510 E Daniel
+805PA,805 W Pennsylvania
+901OR,901 W Oregon
+907/N,907 1/2 W Nevada
+909OR,909 W Oregon
+911SX,911 S Sixth
+912IL,912 W Illinois
+ABL,Agricultural Bioprocess Lab
+AC,Alice Campbell Alumni Ctr
+ACESL,"ACES Lib, Info & Alum Ctr"
+ADB,Art and Design Building
+AEA1,Architecture Annex
+AEA2,"Art-East Annex, Studio 2"
+AESB,Agricultural Engr Sciences Bld
+AH,Altgeld Hall
+AIRPT,Willard Airport
+ALLEN,Allen Residence Hall
+ARC,Activities & Recreation Center
+ARCD,Student Services Arcade Bldg
+ARCH,Architecture Building
+ARMRY,Armory
+ASL,Animal Sciences Laboratory
+ASTR,Astronomy Building
+ATKNS,Atkins Tennis Center
+ATSB,Atmospheric Sciences Bldg
+BANNR,Banner Building
+BEV,Bevier Hall
+BI,Beckman Institute
+BIF,Business Instructional Fac
+BNRL,Burnsides Research Lab
+BOUS,Bousfield Hall
+BRCB,Building Research Council Bldg
+BUR,Burrill Hall
+CA,Chemistry Annex
+CAB,Computing Applications Bldg
+CB,Ceramics Building
+CEHL,Civil Eng Hydrosystems Lab
+CERFA,"2110 S. Griffith Dr., Bldg 4"
+CHRSH,Christopher Hall
+CIF,Campus Instructional Facility
+CLSL,Chemical and Life Sci Lab
+CMPBL,Campbell Hall
+CRC,"Children's Research Center"
+CRCE,Campus Recreation Center East
+CROC,Campus Rec Outdoor Ctr
+CSL,Coordinated Science Lab
+CWS,Colonel Wolfe School
+CWVHE,Ctr Wounded Veterans Higher Ed
+DANCE,Dance Studio
+DCL,Digital Computer Laboratory
+DH,Davenport Hall
+DKH,David Kinley Hall
+EB,English Building
+ECDL,Early Child Development Lab
+CDL,Child Development Laboratory
+ECEB,Electrical & Computer Eng Bldg
+EDUC,Education Building
+EH,Engineering Hall
+ERML,E R Madigan Laboratory
+ESB,Engineering Sciences Building
+EVRT,Everitt Laboratory
+FA,Foellinger Auditorium
+FARFS,FAR - Food Service Building
+FARMS,FAR Meeting Space
+FH,Freer Hall
+FICE,Fighting Illini Ctr for Excellence
+FLAGG,Flagg Hall
+LCLB,"Literatures, Cultures, & Ling"
+FSIC,Fire Service Institute Center
+FTSSB,Fred Turner Student Serv Bldg
+GARNR,Garner Hall
+GELIB,Grainger Engineering Library
+GFSB,Gregory Dr. Food Service
+GH,Gregory Hall
+GPHS,Grad Photo Studio
+GSB,2116 Griffith
+GSLIS,Grad Sch of Lib & Info Science
+H1,Willard Airport: Hangar 1
+H4,Willard Airport: Hangar 4
+HAB,Henry Administration Bldg
+HDG,Harding Band Building
+HFL,Horticulture Field Laboratory
+HUFF,Huff Hall
+IBLDG,I Building
+ICEA,Ice Arena
+IGB,Institute for Genomic Biology
+IGPAB,Inst Gov & Public Affairs Bldg
+IH,Illini Hall
+ILIR,Inst Labor &  Industrial Rel
+ILLGV,Illini Grove
+IMPE,Intramural-Phys Ed Bldg
+ISB,International Studies Building
+ISRL,Illinois Street Residence Lng
+IU,Illini Union
+JAPAN,Japan House
+KAM,Krannert Art Museum
+KCPA,Krannert Center for Perf Arts
+KG,Kenney Gymnasium
+KGA,Kenney Gymnasium Annex
+KH,Ceramics Kiln House
+LAR,Lincoln Avenue Residence Hall
+LAW,Law Building
+LEVIS,Levis Faculty Center
+LH,Lincoln Hall
+LIB,Library
+LMS,Loomis Laboratory
+LUMEB,Sidney Lu Mech Engr Bldg
+MEL,Mechanical Engineering Lab
+MEM,Memorial Stadium
+MH,Mumford Hall
+MHC,McKinley Health Center
+MNTL,Micro & Nanotechnology Lab
+MOR,Morrill Hall
+MOTO,Motorcycle Safety Office
+MRL,Seitz Materials Research Lab
+MSB,Medical Sciences Building
+MSEB,Materials Science & Eng Bld
+MSL,Meat Science Laboratory
+MTVN,Mount Vernon
+MUMHS,Mumford House
+MUSIC,Music Building
+CEEB,"Civil & Envir Eng Bldg"
+NCEB,Newmark Civil Engineering Bldg
+NCSA,Nat Center for Suprcomp Appl
+NEL,Nuclear Engineering Lab
+NHB,Natural History Building
+NOBLE,Noble Hall
+NOYES,Noyes Laboratory
+NRAL,Nuclear Radiations Laboratory
+NRB,Natural Resources Building
+NRSA,Natural Res Studies Annex
+NSRC,National Soybean Res Ctr
+OBSRV,Observatory
+ONL,Online
+OPEB,Optical Physics & Eng Bldg.
+OPEL,Optical Physics & Eng Lab
+PFSB,Peabody Food Serv Bldg
+PLB,Pennsylvania Lounge Bld - PAR
+PSL,Plant Sciences Laboratory
+PSYCH,Psychology Building
+Q1,Willard Airport: Q1
+Q3,Willard Airport: Q3
+Q4,Willard Airport: Q4
+Q5,Willard Airport: Q5
+Q7,Willard Airport: Q7
+Q8,Willard Airport: Q8
+RAL,Roger Adams Laboratory
+REC,Rehabilitation Educ Ctr
+RICHS,Richmond Studio
+SCD,Siebel Center for Design
+SCLPT,Sculpture Building
+SDRP,Student Dining & Res Program
+SFARM,South Farms
+SHS,Speech & Hearing Science Bldg
+SIEBL,Siebel Center for Comp Sci
+SMITH,Smith Memorial Hall
+SNYDR,Snyder Hall
+SPUR,Spurlock Museum
+STDM,Memorial Stadium
+STKPV,Stock Pavilion
+TB,Transportation Building
+TH,Turner Hall
+THBH,Temple Hoyne Buell Hall
+TL,Talbot Laboratory
+LIB,Library
+UHS,University High School
+VANDN,Van Doren Hall
+VGCRP,Vegetable Crops Building
+VMBSB,Vet Med Basic Sciences Bldg
+VMCSL,VetMed ClinicalSkillsLearnCntr
+VMTH,Veterinary Teaching Hospital
+WASJA,Wassaja Hall
+WESTN,Weston Hall
+WOHLR,Wohlers Hall
+WRDL,Wardall Hall - ISR
+SWH,Wymer Hall
+XILLC,Illini Center
+SS,Storefront Studio
