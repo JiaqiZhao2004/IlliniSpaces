@@ -122,7 +122,7 @@ const CampusMap = () => {
                 key={nb.BuildingId}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
               >
-                {nb.BuildingName} ({nb.FreeRoomCount} free)
+                {nb.BuildingName} ({nb.FreeRoomCount} free rooms)
               </button>
             ))}
           </div>

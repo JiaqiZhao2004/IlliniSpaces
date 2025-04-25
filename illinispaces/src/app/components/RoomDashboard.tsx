@@ -8,8 +8,10 @@ const ROOMS_PER_PAGE = 32;
 export interface Room {
     BuildingId: string;
     RoomNumber: string;
+    BuildingName: string;
     Capacity: number;
     Type: string;
+    Available: boolean;
 }
 
 export function RoomDashboard() {
@@ -19,35 +21,36 @@ export function RoomDashboard() {
   const [favoriteBuildings, setFavoriteBuildings] = useState<Set<string>>(new Set());
   const [rooms, setRooms] = useState<Room[]>([])
 
-  const { getToken } = useAuth();
-
   useEffect(() => {
+    const now = new Date();
+    const timeString = now.toTimeString().slice(0, 5);
+    const dateString = now.toISOString().slice(0, 10);
+    const params = new URLSearchParams({
+      date: dateString,
+      time: timeString,
+    });
     const fetchRooms = async () => {
-      const token = await getToken();
-
       try {
-        const res = await fetch(`http://localhost:8080/rooms`, {
-          headers: {
-            method: "GET",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        console.log(data);
-        setRooms(data);
-      } catch (err) {
+        const res = await fetch(`http://localhost:8080/rooms?${params}`);
+        if (!res.ok) throw new Error("Failed to fetch rooms");
+        const rawRooms = await res.json();
+        setRooms(rawRooms);
+       } catch (err) {
         console.error("Error fetching rooms:", err);
       }
     }
-
     fetchRooms();
-  }, []);
+  }
+  , []);
+
+  const { getToken } = useAuth();
 
   useEffect(() => {
     const fetchFavorites = async () => {
       const token = await getToken();
       try {
         const res = await fetch("http://localhost:8080/favorites", {
+          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -105,6 +108,7 @@ export function RoomDashboard() {
     const searchQuery = searchTerm.toLowerCase().replaceAll(' ', '');
     const matchesSearch =
       room.BuildingId.toLowerCase().includes(searchQuery) ||
+      room.BuildingName.toLowerCase().includes(searchQuery) ||
       room.RoomNumber.toLowerCase().includes(searchQuery) ||
       (room.BuildingId + room.RoomNumber).toLowerCase().includes(searchQuery) ||
       (room.Type && room.Type.toLowerCase().includes(searchQuery));
