@@ -43,6 +43,7 @@ def get_lat_lon(building_name: str):
         "Burnsides Research Lab": "1201 W Gregory Dr, Urbana, IL 61801",
         "Building Research Council Bldg": "40.094089, -88.242568",
         "Early Child Development Lab": "1105 W Nevada St, Urbana, IL 61801",
+        "Child Development Laboratory": "1105 W Nevada St, Urbana, IL 61801",
         "Civil Eng Hydrosystems Lab": "205 N Mathews Ave, Urbana, IL 61801",
         "Chemical and Life Sci Lab": "601 S Goodwin Ave, Urbana, IL 61801",
         "Campus Rec Outdoor Ctr": "51 E Gregory Dr, Champaign, IL 61820",
@@ -75,6 +76,7 @@ def get_lat_lon(building_name: str):
         "Materials Science & Eng Bld": "1304 W Green St, Urbana, IL 61801",
         "Meat Science Laboratory": "1503 S Maryland Dr, Urbana, IL 61801",
         "Civil & Envir Eng Bldg": "205 N Mathews Ave, Urbana, IL 61801",
+        "Newmark Civil Engineering Bldg": "205 N Mathews Ave, Urbana, IL 61801",
         "Nat Center for Suprcomp Appl": "1205 W Clark St, Urbana, IL 61801",
         "Nuclear Engineering Lab": "103 S Goodwin Ave, Urbana, IL 61801",
         "Nuclear Radiations Laboratory": "103 S Goodwin Ave, Urbana, IL 61801",
@@ -101,6 +103,8 @@ def get_lat_lon(building_name: str):
         "VetMed ClinicalSkillsLearnCntr": "2001 S Lincoln Ave, Urbana, IL 61802",
         "Veterinary Teaching Hospital": "40.091832, -88.222581",
         "Wardall Hall - ISR": "1012 W Illinois St, Urbana, 61801",
+        "Storefront Studio": "740 S Gregory St, Urbana, IL 61801",
+        "Illni Center": "200 S Wacker Dr, Chicago, IL 60606"
     }
 
     if building_name in renames:

@@ -69,6 +69,7 @@ DH,Davenport Hall
 DKH,David Kinley Hall
 EB,English Building
 ECDL,Early Child Development Lab
+CDL,Child Development Laboratory
 ECEB,Electrical & Computer Eng Bldg
 EDUC,Education Building
 EH,Engineering Hall
@@ -136,6 +137,7 @@ MTVN,Mount Vernon
 MUMHS,Mumford House
 MUSIC,Music Building
 CEEB,"Civil & Envir Eng Bldg"
+NCEB,Newmark Civil Engineering Bldg
 NCSA,Nat Center for Suprcomp Appl
 NEL,Nuclear Engineering Lab
 NHB,Natural History Building
@@ -188,3 +190,6 @@ WASJA,Wassaja Hall
 WESTN,Weston Hall
 WOHLR,Wohlers Hall
 WRDL,Wardall Hall - ISR
+SWH,Wymer Hall
+XILLC,Illini Center
+SS,Storefront Studio
