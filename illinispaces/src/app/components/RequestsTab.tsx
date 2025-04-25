@@ -9,6 +9,7 @@ type Reservation = {
   ReservationId: string;
   RoomNumber: string;
   BuildingName: string;
+  BuildingId: string;
   Date: string;
   StartTime: string;
   EndTime: string;
@@ -24,9 +25,8 @@ export function RequestsTab() {
       try {
         const token = await getToken();
         const res = await fetch("http://localhost:8080/user/reservations", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}`},
         });
         if (!res.ok) throw new Error("Failed to fetch reservations");
 

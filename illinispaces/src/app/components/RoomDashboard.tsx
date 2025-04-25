@@ -11,7 +11,7 @@ export interface Room {
     BuildingName: string;
     Capacity: number;
     Type: string;
-    Available: boolean;
+    Available?: boolean;
 }
 
 export function RoomDashboard() {

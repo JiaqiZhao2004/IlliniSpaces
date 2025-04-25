@@ -27,7 +27,6 @@ export function RoomCard({room, isFavorite, onToggleFavorite}: RoomCardProps) {
     const yyyy = (date) => date.getFullYear();
     const date_to_str = (date) => yyyy(date) + '-' + mm(date) + '-' + dd(date);
 
-    // UserReservation ONLY, Hard Reservations is not yet included
     const addUserReservations = async (BuildingId, RoomNumber, Date, StartTime, EndTime) => {
         if (EndTime <= StartTime) {
             setAlert({message: "End time must be after start time", type: "warning"});
@@ -61,7 +60,7 @@ export function RoomCard({room, isFavorite, onToggleFavorite}: RoomCardProps) {
         }
     };
 
-    const fetchUserReservations = async (BuildingId, RoomNumber, Date) => {
+    const fetchReservations = async (BuildingId, RoomNumber, Date) => {
         const token = await getToken();
 
         const params = new URLSearchParams({
@@ -166,7 +165,7 @@ export function RoomCard({room, isFavorite, onToggleFavorite}: RoomCardProps) {
                     <button
                         onClick={() => {
                             setIsModalOpen(true);
-                            fetchUserReservations(room.BuildingId, room.RoomNumber, date_to_str(date));
+                            fetchReservations(room.BuildingId, room.RoomNumber, date_to_str(date));
                         }}
                         className="w-full py-2 bg-[#e74c3c] text-white rounded-md hover:bg-[#d44233] transition-colors duration-300">
                         View Status
@@ -210,7 +209,7 @@ export function RoomCard({room, isFavorite, onToggleFavorite}: RoomCardProps) {
                                             onChange={
                                                 (date) => {
                                                     setDate(date);
-                                                    fetchUserReservations(room.BuildingId, room.RoomNumber, date_to_str(date))
+                                                    fetchReservations(room.BuildingId, room.RoomNumber, date_to_str(date))
                                                 }
                                             }
                                             className="border border-gray-300 rounded-md px-4 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#e74c3c]"
@@ -267,7 +266,7 @@ export function RoomCard({room, isFavorite, onToggleFavorite}: RoomCardProps) {
                                             date_to_str(date),
                                             startTime,
                                             endTime
-                                        ).then(() => fetchUserReservations(room.BuildingId, room.RoomNumber, date_to_str(date)));
+                                        ).then(() => fetchReservations(room.BuildingId, room.RoomNumber, date_to_str(date)));
                                     }}
                                     className="px-5 py-2 bg-[#e74c3c] text-white rounded-md
                                hover:bg-[#d44233] active:bg-[#c7372a]

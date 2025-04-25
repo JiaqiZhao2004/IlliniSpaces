@@ -1,11 +1,13 @@
 import {User} from "@clerk/backend";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useAuth} from "@clerk/nextjs";
+import {RescheduleModal} from "@/app/components/RescheduleModal";
 
-interface UserRequestProps {
+export interface UserRequestProps {
   ReservationId: string;
   RoomNumber: string;
   BuildingName: string;
+  BuildingId: string;
   Date: string;
   StartTime: string;
   EndTime: string;
@@ -15,11 +17,13 @@ export function UserRequest({
   ReservationId,
   RoomNumber,
   BuildingName,
+  BuildingId,
   Date,
   StartTime,
   EndTime
 }: UserRequestProps) {
   const { getToken } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const isActive = (dateStr, startTimeStr) => {
     const now = new globalThis.Date();
@@ -39,6 +43,24 @@ export function UserRequest({
       body: JSON.stringify({ ReservationId: ReservationId })
     });
   }
+
+  // Close modal with ESC key
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+            setIsModalOpen(false);
+        }
+    };
+
+    if (isModalOpen) {
+        document.addEventListener("keydown", handleEsc);
+    }
+
+    // Cleanup listener when modal closes
+    return () => {
+        document.removeEventListener("keydown", handleEsc);
+    };
+  }, [isModalOpen]);
 
   return (
     <>
@@ -67,7 +89,7 @@ export function UserRequest({
             </button>
             <button
               className="px-4 py-2 border border-[#e74c3c] text-[#e74c3c] text-sm rounded-md hover:bg-[#fbeaea] transition duration-300"
-              onClick={() => alert('Reschedule clicked')}
+              onClick={() => setIsModalOpen(true)}
             >
               Reschedule
             </button>
@@ -101,6 +123,9 @@ export function UserRequest({
           </div>
         </div>
       )}
-    </>
-  );
+
+      {isModalOpen && <RescheduleModal ReservationId={ReservationId} RoomNumber={RoomNumber} BuildingName={BuildingName} BuildingId={BuildingId}
+        Date={Date} StartTime={StartTime} OnClose={() => setIsModalOpen(false)}/>}
+      </>
+  )
 }
