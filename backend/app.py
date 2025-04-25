@@ -214,7 +214,7 @@ def get_user_reservations():
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     cursor.execute("""
-            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.StartTime) AS start_time
+            SELECT ur.ReservationId, ur.RoomNumber, b.BuildingName, b.BuildingId, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.StartTime) AS start_time
             FROM UserReservations ur
             JOIN Buildings b ON ur.BuildingId = b.BuildingId
             WHERE ur.UID = %s AND CONCAT(ur.Date, ' ', ur.EndTime) > %s
@@ -222,7 +222,7 @@ def get_user_reservations():
         """, (uid, now))
     active_reservations = cursor.fetchall()
     cursor.execute("""
-            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.EndTime) AS end_time
+            SELECT ur.ReservationId, ur.RoomNumber, b.BuildingName, b.BuildingId, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.EndTime) AS end_time
             FROM UserReservations ur
             JOIN Buildings b ON ur.BuildingId = b.BuildingId
             WHERE ur.UID = %s AND CONCAT(ur.Date, ' ', ur.EndTime) <= %s
@@ -234,33 +234,6 @@ def get_user_reservations():
     connection.close()
 
     return jsonify(user_reservations), 200
-
-    # try:
-    #     cursor.execute("""
-    #         SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime
-    #         FROM UserReservations ur
-    #         JOIN Buildings b ON ur.BuildingId = b.BuildingId
-    #         WHERE ur.UID = %s
-    #     """, (uid,))
-    #     reservations = cursor.fetchall()
-    # except mysql.connector.Error as e:
-    #     return jsonify({"error": str(e)}), 500
-    # finally:
-    #     cursor.close()
-    #     connection.close()
-
-    # Optional: categorize active vs past
-    # today = datetime.now().date()
-    # active, past = [], []
-
-    # for res in reservations:
-    #     res_date = datetime.strptime(res["Date"], "%Y-%m-%d").date()
-    #     (active if res_date >= today else past).append(res)
-
-    # return jsonify({
-    #     "active": active,
-    #     "past": past
-    # }), 200
 
 @app.route('/user/reservations', methods=['POST'])
 def add_user_reservations():
@@ -325,6 +298,93 @@ def add_user_reservations():
         connection.close()
 
     return jsonify({'message': 'User Reservation added successfully'}), 201
+
+
+@app.route('/user/reservations', methods=['PUT'])
+def update_user_reservations():
+
+    try:
+        get_user_id(request)  # get UID from the request
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401  # Return 401 Unauthorized for failures
+
+    data = request.json
+    reservation_id = data.get('ReservationId')
+    building_id = data.get('BuildingId')
+    room_number = data.get('RoomNumber')
+    date = data.get('Date')
+    start_time = data.get('StartTime')
+    end_time = data.get('EndTime')
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+        connection.start_transaction()
+
+        cursor.execute("""
+            SELECT ReservationId AS id FROM UserReservations
+            WHERE BuildingId = %s AND RoomNumber = %s AND EndTime > %s AND StartTime < %s AND Date = %s
+                AND ReservationId <> %s
+            UNION ALL
+            Select EventId AS id FROM HardReservations
+            WHERE BuildingId = %s AND RoomNumber = %s AND EndTime > %s AND StartTime < %s
+            AND Repeats LIKE %s
+            """, (
+            building_id, room_number, start_time, end_time, date, reservation_id,
+            building_id, room_number, start_time, end_time, f"%{get_weekday_letter(date)}%"
+        ))
+        conflicts = cursor.fetchall()
+        num_conflicts = len(conflicts)
+        if num_conflicts:
+            return jsonify({'error': f'Conflicted with {num_conflicts} reservations. Try another slot.'}), 409
+
+        cursor.execute("UPDATE UserReservations SET StartTime = %s, EndTime = %s "
+                       "WHERE ReservationId = %s", (start_time, end_time, reservation_id))
+        connection.commit()
+    except mysql.connector.Error as err:
+        connection.rollback()
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    return jsonify({'message': 'User Reservation updated successfully'}), 201
+
+
+@app.route('/user/reservations', methods=['DELETE'])
+def delete_user_reservations():
+    try:
+        uid = get_user_id(request)  # Extract user ID from token
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
+
+    # Required parameters (can be passed as query or JSON)
+    data = request.get_json()
+    reservation_id = data.get("ReservationId")
+
+    if not reservation_id:
+        return jsonify({"error": "ReservationId is required"}), 400
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            "DELETE FROM UserReservations WHERE UID = %s AND ReservationId = %s",
+            (uid, reservation_id)
+        )
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "No matching reservation found"}), 404
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    return jsonify({"message": "Reservation deleted successfully"}), 200
 
 
 @app.route('/reservations/search', methods=['GET'])
