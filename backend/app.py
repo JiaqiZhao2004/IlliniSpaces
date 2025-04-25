@@ -214,7 +214,7 @@ def get_user_reservations():
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     cursor.execute("""
-            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.StartTime) AS start_time
+            SELECT ur.ReservationId, ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.StartTime) AS start_time
             FROM UserReservations ur
             JOIN Buildings b ON ur.BuildingId = b.BuildingId
             WHERE ur.UID = %s AND CONCAT(ur.Date, ' ', ur.EndTime) > %s
@@ -222,7 +222,7 @@ def get_user_reservations():
         """, (uid, now))
     active_reservations = cursor.fetchall()
     cursor.execute("""
-            SELECT ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.EndTime) AS end_time
+            SELECT ur.ReservationId, ur.RoomNumber, b.BuildingName, ur.Date, ur.StartTime, ur.EndTime, CONCAT(ur.Date, ' ', ur.EndTime) AS end_time
             FROM UserReservations ur
             JOIN Buildings b ON ur.BuildingId = b.BuildingId
             WHERE ur.UID = %s AND CONCAT(ur.Date, ' ', ur.EndTime) <= %s
@@ -325,6 +325,41 @@ def add_user_reservations():
         connection.close()
     
     return jsonify({'message': 'User Reservation added successfully'}), 201
+
+
+@app.route('/user/reservations', methods=['DELETE'])
+def delete_user_reservations():
+    try:
+        uid = get_user_id(request)  # Extract user ID from token
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
+
+    # Required parameters (can be passed as query or JSON)
+    data = request.get_json()
+    reservation_id = data.get("ReservationId")
+
+    if not reservation_id:
+        return jsonify({"error": "ReservationId is required"}), 400
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    try:
+        cursor.execute(
+            "DELETE FROM UserReservations WHERE UID = %s AND ReservationId = %s",
+            (uid, reservation_id)
+        )
+        connection.commit()
+
+        if cursor.rowcount == 0:
+            return jsonify({"error": "No matching reservation found"}), 404
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+    return jsonify({"message": "Reservation deleted successfully"}), 200
 
 
 @app.route('/reservations/search', methods=['GET'])

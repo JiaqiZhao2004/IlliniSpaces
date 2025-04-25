@@ -6,6 +6,7 @@ import { UserRequest } from "../components/UserRequest";
 import {da} from "date-fns/locale";
 
 type Reservation = {
+  ReservationId: string;
   RoomNumber: string;
   BuildingName: string;
   Date: string;
