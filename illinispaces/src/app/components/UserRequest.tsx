@@ -34,7 +34,7 @@ export function UserRequest({
 
   const onCancel = async () => {
     const token = await getToken();
-    await fetch("/user/reservations", {
+    await fetch("http://localhost:8080/user/reservations", {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,

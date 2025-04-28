@@ -60,16 +60,17 @@ def get_email(request):
 def get_user_id(request):
     """Fetch the user ID from the database using the email."""
     email = get_email(request)
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
     try:
-        connection = get_db_connection()
-        cursor = connection.cursor()
         cursor.execute("SELECT UID FROM Users WHERE Email = %s", (email,))
         result = cursor.fetchone()
-        cursor.close()
-        connection.close()
+
     except mysql.connector.Error as e:
         raise ValueError(f"Database error: {e}")
     finally:
+        cursor.close()
         connection.close()  # Ensures the connection is always closed
 
     if result:
