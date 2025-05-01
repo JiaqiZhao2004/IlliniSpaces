@@ -10,7 +10,7 @@ Out of respect for the website’s usage policies and in accordance with ethical
 - Removed all scripts and code used for web scraping.
 
 This repository contains only the core application logic and schema design for demonstration purposes. To test the 
-application, you may generate your own data based on the schema in `schema.sql`.
+application, you may generate your own data based on the schema in `schema.sql` with examples given in `<Relation>_mock_data.csv` files.
 
 If you are interested in running the project with real data, please use a permitted data source or contact the original 
 data provider for explicit permission.

@@ -1,0 +1,3 @@
+ReservationId,Date,StartTime,EndTime,UID,RoomNumber,BuildingId
+13,2025-05-01,11:00,12:00,1,17,PSYCH
+14,2025-05-02,13:00,14:00,2,116,RAL
