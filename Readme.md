@@ -31,13 +31,14 @@ Watch a walkthrough of IlliniSpaces in action:
 .
 ├── backend/                # Flask or backend logic (if applicable)
 │   ├── .env.example        # Database & Clerk Credentials
-├── illinispaces/           # Web interface (Next.js, HTML, etc.)
-│   ├── .env.example        # Clerk Credentials
 ├── data/
 │   ├── Note.md             # Note on dataset creation
 │   ├── schema.sql          # Database schema
 │   ├── load_mock_data.sql  # Load mock data to database
 │   ├── mock_data/          # Example data for each relation
+├── docs/                   # Project report and demo images
+├── illinispaces/           # Web interface (Next.js, HTML, etc.)
+│   ├── .env.example        # Clerk Credentials
 ├── setup_db.sh             # Shell script to set up database
 ├── README.md               # This file
 ```
