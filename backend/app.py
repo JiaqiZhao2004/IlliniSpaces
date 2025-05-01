@@ -14,6 +14,7 @@ clerk = Clerk(bearer_auth=CLERK_SECRET_KEY)
 app = Flask(__name__)
 CORS(app)
 
+
 def get_db_connection():
     db_user = os.getenv('DB_USER')
     db_pass = os.getenv('DB_PASS')
@@ -28,6 +29,7 @@ def get_db_connection():
         port=3306  # Default MySQL port
     )
     return connection
+
 
 def get_email(request):
     """Verify Clerk JWT and return the user's email."""
@@ -57,6 +59,7 @@ def get_email(request):
     except Exception as e:
         raise ValueError("Invalid or expired token") from e
 
+
 def get_user_id(request):
     """Fetch the user ID from the database using the email."""
     email = get_email(request)
@@ -77,6 +80,7 @@ def get_user_id(request):
         return result[0]
     else:
         raise ValueError("User not found")
+
 
 # Create a favorite
 @app.route('/favorites', methods=['POST'])
@@ -106,6 +110,7 @@ def add_favorite():
 
     return jsonify({'message': 'Favorite added successfully'}), 201
 
+
 # Get all favorites for a user
 @app.route('/favorites', methods=['GET'])
 def get_favorites():
@@ -121,6 +126,7 @@ def get_favorites():
     connection.close()
 
     return jsonify({'favorites': [fav[0] for fav in favorites]}), 200
+
 
 # Delete a favorite
 @app.route('/favorites', methods=['DELETE'])
@@ -148,6 +154,7 @@ def delete_favorite():
         connection.close()
 
     return jsonify({'message': 'Favorite deleted successfully'}), 200
+
 
 @app.route('/users', methods=['POST'])
 def add_user():
@@ -183,6 +190,7 @@ def add_user():
 
     return jsonify({'message': 'User added successfully'}), 201
 
+
 @app.route('/users', methods=['DELETE'])
 def delete_user():
     try:
@@ -202,6 +210,7 @@ def delete_user():
         cursor.close()
         connection.close()
     return jsonify({'message': 'User deleted successfully'}), 200
+
 
 @app.route('/user/reservations', methods=['GET'])
 def get_user_reservations():
@@ -230,15 +239,15 @@ def get_user_reservations():
             ORDER BY end_time DESC
         """, (uid, now))
     past_reservations = cursor.fetchall()
-    user_reservations = {"active" : active_reservations, "past" : past_reservations}
+    user_reservations = {"active": active_reservations, "past": past_reservations}
     cursor.close()
     connection.close()
 
     return jsonify(user_reservations), 200
 
+
 @app.route('/user/reservations', methods=['POST'])
 def add_user_reservations():
-
     try:
         uid = get_user_id(request)  # get UID from the request
     except ValueError as e:
@@ -253,15 +262,19 @@ def add_user_reservations():
 
     connection = get_db_connection()
     cursor = connection.cursor()
-    try:
-        cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
-        connection.start_transaction()
+    cursor.execute("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ")
+    connection.start_transaction()
 
+    try:
+        # 1. Check weekly reservation limit
         cursor.execute("""
-                    SELECT BuildingName, COUNT(*) FROM UserReservations NATURAL JOIN Buildings
-                    WHERE UID = %s AND YEARWEEK(Date, 1) = YEARWEEK(%s, 1)
-                    GROUP BY BuildingName
-                    """,(uid, date))
+            SELECT BuildingName, COUNT(*) 
+            FROM UserReservations 
+            NATURAL JOIN Buildings
+            WHERE UID = %s AND YEARWEEK(Date, 1) = YEARWEEK(%s, 1)
+            GROUP BY BuildingName
+        """, (uid, date))
+
         existing_reservations = cursor.fetchall()
         if existing_reservations:
             data = {}
@@ -272,25 +285,40 @@ def add_user_reservations():
             if total_reservations > 5:
                 return jsonify({'error': f'You already have 5 reservations in a week: {data}'}), 400
 
+        # 2. Check for time conflicts
         cursor.execute("""
-            SELECT ReservationId AS id FROM UserReservations
-            WHERE BuildingId = %s AND RoomNumber = %s AND EndTime > %s AND StartTime < %s AND Date = %s
+            SELECT ReservationId AS id 
+            FROM UserReservations
+            WHERE BuildingId = %s AND RoomNumber = %s 
+                AND EndTime > %s AND StartTime < %s AND Date = %s
             UNION ALL
-            Select EventId AS id FROM HardReservations
-            WHERE BuildingId = %s AND RoomNumber = %s AND EndTime > %s AND StartTime < %s
-            AND Repeats LIKE %s
-            """, (
+            SELECT EventId AS id 
+            FROM HardReservations
+            WHERE BuildingId = %s AND RoomNumber = %s 
+                AND EndTime > %s AND StartTime < %s
+                AND Repeats LIKE %s
+        """, (
             building_id, room_number, start_time, end_time, date,
             building_id, room_number, start_time, end_time, f"%{get_weekday_letter(date)}%"
         ))
+
         conflicts = cursor.fetchall()
         num_conflicts = len(conflicts)
         if num_conflicts:
+            connection.rollback()
             return jsonify({'error': f'Conflicted with {num_conflicts} reservations. Try another slot.'}), 409
 
-        cursor.execute("INSERT INTO UserReservations (UID, RoomNumber, BuildingId, Date, StartTime, EndTime) VALUES (%s, %s, %s, %s, %s, %s)",
-                       (uid, room_number, building_id, date, start_time, end_time))
+        # 3. Actually insert the new reservation
+        cursor.execute("""
+            INSERT INTO UserReservations (UID, RoomNumber, BuildingId, Date, StartTime, EndTime) 
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """,(uid, room_number, building_id, date, start_time, end_time))
+
+        # 4. If all successful, commit
         connection.commit()
+
+        return jsonify({'message': 'User Reservation added successfully'}), 201
+
     except mysql.connector.Error as err:
         connection.rollback()
         return jsonify({'error': str(err)}), 500
@@ -298,12 +326,9 @@ def add_user_reservations():
         cursor.close()
         connection.close()
 
-    return jsonify({'message': 'User Reservation added successfully'}), 201
-
 
 @app.route('/user/reservations', methods=['PUT'])
 def update_user_reservations():
-
     try:
         get_user_id(request)  # get UID from the request
     except ValueError as e:
@@ -437,6 +462,7 @@ def search_reservations():
 
     return jsonify({'reservations': reservations}), 200
 
+
 @app.route('/buildings', methods=['GET'])
 def get_buildings():
     connection = get_db_connection()
@@ -454,6 +480,7 @@ def get_buildings():
 
     return jsonify({'buildings': results}), 200
 
+
 def validate_decimal_precision(value, total_digits, decimal_places):
     try:
         float_val = float(value)
@@ -468,13 +495,14 @@ def validate_decimal_precision(value, total_digits, decimal_places):
 
     return len(int_part + dec_part) <= total_digits and len(dec_part) <= decimal_places
 
+
 @app.route('/nearestBuildings', methods=['GET'])
 def nearest_rooms():
     try:
         lat = float(request.args.get('lat'))
         lng = float(request.args.get('lng'))
-        current_date = request.args.get('date')   # format: 'YYYY-MM-DD'
-        current_time = request.args.get('time')   # format: 'HH:MM'
+        current_date = request.args.get('date')  # format: 'YYYY-MM-DD'
+        current_time = request.args.get('time')  # format: 'HH:MM'
         max_results = int(request.args.get('max', 5))
 
         if not validate_decimal_precision(lat, 10, 8):
@@ -507,6 +535,7 @@ def nearest_rooms():
         if cursor: cursor.close()
         if conn: conn.close()
 
+
 @app.route('/rooms', methods=['GET'])
 def get_rooms():
     try:
@@ -536,23 +565,13 @@ def get_rooms():
         if cursor: cursor.close()
         if conn: conn.close()
 
-# TODO: UPDATE method for User
-# @app.route('/users', methods=['UPDATE'])
-# def update_user():
-#     try:
-#         uid = get_user_id(request)
-#     except ValueError as e:
-#         return jsonify({"error": str(e)}), 401
-#
-#     data = request.json
-#
-#     return jsonify({'message': 'User updated successfully'}), 200
 
 def get_weekday_letter(date_str: str):
     date_obj = datetime.strptime(date_str, "%Y-%m-%d")
     weekday_index = date_obj.weekday()  # 0 = Monday, 6 = Sunday
     letters = ['M', 'T', 'W', 'R', 'F', 'S', 'U']  # R = Thursday, U = Sunday
     return letters[weekday_index]
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
