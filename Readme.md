@@ -1,8 +1,17 @@
 # IlliniSpaces (CS 411 Final Project)
 
+![dashboard.jpg](docs/dashboard.jpg)
+
 **IlliniSpaces** is a web-based platform designed to help students and organizations at the University of Illinois efficiently locate and informally reserve available meeting rooms on campus. Users can search by building, room capacity, amenities, and availability.
 
 This project was built as part of the CS 411 (Database Systems) course at the University of Illinois Urbana-Champaign.
+### 📺 Demo Video
+
+Watch a walkthrough of IlliniSpaces in action:
+
+[![IlliniSpaces Demo Video](https://img.youtube.com/vi/MKAqZ2_Jfng/0.jpg)](https://youtu.be/MKAqZ2_Jfng)
+
+> 🔗 Click the image above or [watch it here on YouTube](https://youtu.be/MKAqZ2_Jfng)
 
 ---
 
